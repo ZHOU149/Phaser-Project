@@ -6,6 +6,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
 
+
 </head>
 
 <body>
@@ -14,8 +15,8 @@
 
         var config = {
             type: Phaser.AUTO,
-            width: 1200,
-            height: 600,
+            width: 1800,
+            height: 1800,
             physics: {
                 default: 'arcade',
             },
@@ -31,7 +32,6 @@
         var game = new Phaser.Game(config);
 
         //Game Objects
-        var platforms;
         var map;
         var player;
         var mark;
@@ -49,6 +49,12 @@
         var shoot_cool_down = true;
         var shooting_state = false;
 
+        var map;
+        var tileset;
+        var layer;
+        var layer_1;
+        var layer_2;
+
         function preload() {
             this.load.image('sky', 'assets/deepblue.png');
             this.load.image('platform', 'assets/platform.png');
@@ -56,21 +62,22 @@
             this.load.image('mark', 'assets/mark.png');
             this.load.atlas('slime', 'assets/slimesheet.png', 'assets/slimesheet.json');
             this.load.atlas('seacreatures', 'assets/seacreatures_json.png', 'assets/seacreatures_json.json');
+            this.load.image('factorytiles', 'factorytileset.png');
+            this.load.image('scifitiles', 'scifitileset.png');
+            this.load.tilemapTiledJSON('tilemap', 'example.json');
 
-            this.load.tilemapTiledJSON('tilemap', 'assets/funny.json');
-            this.load.image('tilesheet1', 'assets/tileset_x1.png');
         }
 
         function create() {
             // const map = this.make.tilemap({key:'tilemap', tileWidth: 50, tileHeight: 50 });
             // tileset = map.addTilesetImage('tilesheet1');
             // layer = map.createLayer('Tile Layer 1', tileset);
-            
+
             // zoom
             this.cameras.main.setZoom(1);
 
             //Set the background origin to be at (0, 0) or top left corner of the image rather than the center of the image asset
-            let background = this.add.tileSprite(0, 0, game.scale.width, game.scale.height, 'sky').setOrigin(0, 0);
+            //let background = this.add.tileSprite(0, 0, game.scale.width, game.scale.height, 'sky').setOrigin(0, 0);
 
             //create all animations
             this.anims.create({ key: 'jellyfish', frames: this.anims.generateFrameNames('seacreatures', { prefix: 'blueJellyfish', end: 32, zeroPad: 4 }), repeat: -1 });
@@ -85,14 +92,26 @@
             var right = this.anims.create({ key: 'slime_right', frames: this.anims.generateFrameNames('slime', { prefix: 'slime_right', end: 5, zeroPad: 2 }), repeat: -1, frameRate: 10 });
             playerAnimations['right'] = right;
 
-            //Create the platforms and the player character set to collide with the platforms
-            createPlatforms(this);
+            //Create the layer_2 and the player character set to collide with the layer_2
+            //createlayer_2(this);
 
             // entity
             mark = new Mark(this, 0, 0, 'mark');
+            map = this.make.tilemap({ key: 'tilemap' });
+            var tileset_1 = map.addTilesetImage('factorytileset', 'factorytiles');
+            var tileset_2 = map.addTilesetImage('scifitileset', 'scifitiles');
+            layer_1 = map.createLayer('floor', tileset_1);
+            layer_2 = map.createLayer('walls', tileset_2);
 
-            player = new Player(this, 400, 400, 'slime', playerAnimations);
-            this.physics.add.collider(player, platforms);
+            map.setCollision([76, 39, 79, 5]);
+            //
+            // //Create the layer_2 and the player character set to collide with the layer_2
+            // createlayer_2(this);
+
+
+            player = new Player(this, 500, 500, 'slime', playerAnimations);
+            this.physics.add.collider(player, layer_2);
+            //  this.physics.add.collider(player, layer_2);
             player.play(player.animations['idle']);
 
             let jellyfish = new SeaCreature(this, 200, 150, 'seacreatures', 'jellyfish');
@@ -118,20 +137,25 @@
             }, this);
 
             this.input.on('pointerdown', function (pointer) {
-                if(gun_type === "machine")
+                if (gun_type === "machine")
                     shooting_state = true;
-                else if(gun_type === "shotgun")
-                {
+                else if (gun_type === "shotgun") {
                     angle = Phaser.Math.Angle.Between(player.x, player.y, mark.x, mark.y);
                     var bullet;
                     bullet = new Bullet(this, player.x, player.y, 'missile', angle);
-                    bullet = new Bullet(this, player.x, player.y, 'missile', angle + 15/180*Math.PI);
-                    bullet = new Bullet(this, player.x, player.y, 'missile', angle - 15/180*Math.PI);
+                    this.physics.add.overlap(bullet, seacreatures, bullet_hit, null, this);
+                    this.physics.add.collider(bullet, layer_2, bullet_hit_wall, null, this);
+
+                    bullet = new Bullet(this, player.x, player.y, 'missile', angle + 15 / 180 * Math.PI);
+                    this.physics.add.overlap(bullet, seacreatures, bullet_hit, null, this);
+                    this.physics.add.collider(bullet, layer_2, bullet_hit_wall, null, this);
+
+                    bullet = new Bullet(this, player.x, player.y, 'missile', angle - 15 / 180 * Math.PI);
+                    this.physics.add.overlap(bullet, seacreatures, bullet_hit, null, this);
+                    this.physics.add.collider(bullet, layer_2, bullet_hit_wall, null, this);
+                    
                     shoot_cool_down = false;
                     this.time.delayedCall(1000, cool_down, [], this);
-                    this.physics.add.overlap(bullet, seacreatures, bullet_hit, null, this);
-                    this.physics.add.overlap(bullet, platforms, bullet_hit_wall, null, this);
-                    this.physics.add.collider(bullet, platforms);
                 }
             }, this);
 
@@ -145,22 +169,18 @@
             graphics = this.add.graphics();
         }
 
-        function createPlatforms(scene) {
-            platforms = scene.physics.add.staticGroup();
+        function createlayer_2(scene) {
+            layer_2 = scene.physics.add.staticGroup();
 
             //basePlatform is the floor of the game
-            let basePlatform = platforms.create(game.scale.width / 2, game.scale.height - 30, 'platform');
+            let basePlatform = layer_2.create(game.scale.width / 2, game.scale.height - 30, 'platform');
             basePlatform.setScale(3, 1).refreshBody();
 
-            platforms.create(250, 250, 'platform');
-            platforms.create(950, 400, 'platform');
+            layer_2.create(250, 250, 'platform');
+            layer_2.create(950, 400, 'platform');
         }
 
         function update() {
-            //Player will not move in the x-axis unless a movement key is being pressed
-            //player.setVelocityX(0);
-
-            //Player has "drag" on the x-axis meaning they slide a bit after an input
             player.setDragX(1500);
 
             //Handle player movements
@@ -190,7 +210,7 @@
                 player.setVelocityX(0);
                 player.play(player.animations['idle'], true);
             }
-            
+
             if (keys.Q.isDown) {
                 if (gun_type === "machine")
                     gun_type = "shotgun";
@@ -208,8 +228,7 @@
                     shoot_cool_down = false;
                     this.time.delayedCall(100, cool_down, [], this);
                     this.physics.add.overlap(bullet, seacreatures, bullet_hit, null, this);
-                    this.physics.add.overlap(bullet, platforms, bullet_hit_wall, null, this);
-                    this.physics.add.collider(bullet, platforms);
+                    this.physics.add.collider(bullet, layer_2, bullet_hit_wall, null, this);
                 }
             }
         }
