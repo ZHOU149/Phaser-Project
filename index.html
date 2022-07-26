@@ -54,6 +54,8 @@
         var layer;
         var layer_1;
         var layer_2;
+        var layer_3;
+        var layer_4;
 
         function preload() {
             this.load.image('sky', 'assets/deepblue.png');
@@ -83,18 +85,21 @@
             var right = this.anims.create({ key: 'slime_right', frames: this.anims.generateFrameNames('slime', { prefix: 'slime_right', end: 5, zeroPad: 2 }), repeat: -1, frameRate: 10 });
             playerAnimations['right'] = right;
            
-            map = this.make.tilemap({ key: 'tilemap' });
+            map = this.make.tilemap({ key: 'tilemap'});
+            map.setCollision([0, 150]);
             var tileset_1 = map.addTilesetImage('factorytileset', 'factorytiles');
             var tileset_2 = map.addTilesetImage('scifitileset', 'scifitiles');
             layer_1 = map.createLayer('floorscifi', tileset_2);
-            let layer_3 = map.createLayer('floorfactory', tileset_1);
+            layer_3 = map.createLayer('floorfactory', tileset_1);
             layer_2 = map.createLayer('wallsscifi', tileset_2);
-            let layer_4 = map.createLayer('wallsfactory', tileset_1);
+            layer_4 = map.createLayer('wallsfactory', tileset_1);
 
-            map.setCollision([72, 70, 182, 146, 150]);
+            // map.setTileCollision(layer_3, [2, 3, 6, 9, 10, 39, 40, 46, 47, 76, 77, 109, 110, 111, 306, 150, 114, 146, 147, 148, 183, 184, 185, 298, 299, 305, 158, 335, 336, 342, 343, 372, 373, 374, 379, 378, 84, 337, 7, 376]);
 
             mark = new Mark(this, 0, 0, 'mark');
             player = new Player(this, 500, 500, 'slime', playerAnimations);
+            this.physics.add.collider(player, layer_3);
+            this.physics.add.collider(player, layer_4);
             player.play(player.animations['idle']);
 
             let jellyfish = new SeaCreature(this, 200, 150, 'seacreatures', 'jellyfish');
