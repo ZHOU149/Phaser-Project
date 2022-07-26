@@ -6,6 +6,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
 
+
 </head>
 
 <body>
@@ -14,8 +15,8 @@
 //Brooke's commit
         var config = {
             type: Phaser.AUTO,
-            width: 1200,
-            height: 600,
+            width: 1800,
+            height: 1800,
             physics: {
                 default: 'arcade',
             },
@@ -49,6 +50,12 @@
         var shoot_cool_down = true;
         var shooting_state = false;
 
+        var map;
+          var tileset;
+          var layer;
+          var layer_1;
+          var layer_2;
+
         function preload() {
             this.load.image('sky', 'assets/deepblue.png');
             this.load.image('platform', 'assets/platform.png');
@@ -56,9 +63,10 @@
             this.load.image('mark', 'assets/mark.png');
             this.load.atlas('slime', 'assets/slimesheet.png', 'assets/slimesheet.json');
             this.load.atlas('seacreatures', 'assets/seacreatures_json.png', 'assets/seacreatures_json.json');
+            this.load.image('factorytiles', 'factorytileset.png');
+                  this.load.image('scifitiles', 'scifitileset.png');
+                  this.load.tilemapTiledJSON('tilemap','example.json');
 
-            this.load.tilemapTiledJSON('tilemap', 'assets/funny.json');
-            this.load.image('tilesheet1', 'assets/tileset_x1.png');
         }
 
         function create() {
@@ -70,7 +78,7 @@
             this.cameras.main.setZoom(1);
 
             //Set the background origin to be at (0, 0) or top left corner of the image rather than the center of the image asset
-            let background = this.add.tileSprite(0, 0, game.scale.width, game.scale.height, 'sky').setOrigin(0, 0);
+            //let background = this.add.tileSprite(0, 0, game.scale.width, game.scale.height, 'sky').setOrigin(0, 0);
 
             //create all animations
             this.anims.create({ key: 'jellyfish', frames: this.anims.generateFrameNames('seacreatures', { prefix: 'blueJellyfish', end: 32, zeroPad: 4 }), repeat: -1 });
@@ -86,13 +94,25 @@
             playerAnimations['right'] = right;
 
             //Create the platforms and the player character set to collide with the platforms
-            createPlatforms(this);
+            //createPlatforms(this);
 
             // entity
             mark = new Mark(this, 0, 0, 'mark');
+            map = this.make.tilemap({key: 'tilemap'});
+                  var tileset_1 = map.addTilesetImage('factorytileset', 'factorytiles');
+                  var tileset_2 = map.addTilesetImage('scifitileset', 'scifitiles');
+                  layer_1 = map.createLayer('floor', tileset_1);
+                  layer_2 = map.createLayer('walls', tileset_2);
 
-            player = new Player(this, 400, 400, 'slime', playerAnimations);
-            this.physics.add.collider(player, platforms);
+                  map.setCollision([76,39,79,5]);
+                 //
+                 // //Create the platforms and the player character set to collide with the platforms
+                 // createPlatforms(this);
+
+
+            player = new Player(this, 500, 500, 'slime', playerAnimations);
+       this.physics.add.collider(player, layer_2);
+          //  this.physics.add.collider(player, platforms);
             player.play(player.animations['idle']);
 
             let jellyfish = new SeaCreature(this, 200, 150, 'seacreatures', 'jellyfish');
