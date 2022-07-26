@@ -65,7 +65,7 @@
             // const map = this.make.tilemap({key:'tilemap', tileWidth: 50, tileHeight: 50 });
             // tileset = map.addTilesetImage('tilesheet1');
             // layer = map.createLayer('Tile Layer 1', tileset);
-            
+
             // zoom
             this.cameras.main.setZoom(1);
 
@@ -88,13 +88,14 @@
             //Create the platforms and the player character set to collide with the platforms
             createPlatforms(this);
 
-            // entity
+            // entities
             mark = new Mark(this, 0, 0, 'mark');
 
             player = new Player(this, 400, 400, 'slime', playerAnimations);
             this.physics.add.collider(player, platforms);
             player.play(player.animations['idle']);
 
+            //will be changed when sprites are finished
             let jellyfish = new SeaCreature(this, 200, 150, 'seacreatures', 'jellyfish');
             jellyfish.addTween(this, jellyfish.x, jellyfish.y + 20, 2000);
             seacreatures.push(jellyfish);
@@ -190,7 +191,7 @@
                 player.setVelocityX(0);
                 player.play(player.animations['idle'], true);
             }
-            
+
             if (keys.Q.isDown) {
                 if (gun_type === "machine")
                     gun_type = "shotgun";
