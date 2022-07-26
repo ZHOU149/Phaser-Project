@@ -62,6 +62,7 @@
         }
 
         function create() {
+            //Hello World
             // const map = this.make.tilemap({key:'tilemap', tileWidth: 50, tileHeight: 50 });
             // tileset = map.addTilesetImage('tilesheet1');
             // layer = map.createLayer('Tile Layer 1', tileset);
@@ -95,7 +96,7 @@
             this.physics.add.collider(player, platforms);
             player.play(player.animations['idle']);
 
-            //will be changed when sprites are finished
+            //will be updated with new sprites
             let jellyfish = new SeaCreature(this, 200, 150, 'seacreatures', 'jellyfish');
             jellyfish.addTween(this, jellyfish.x, jellyfish.y + 20, 2000);
             seacreatures.push(jellyfish);
