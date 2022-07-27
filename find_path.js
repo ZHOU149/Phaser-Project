@@ -63,6 +63,7 @@ function find_path(start, end) {
     var s = start[0] + " " + start[1];
     var come_from = {};
     come_from[s] = [0, 0];
+    
 
     var front = [];
     front.push(start);
@@ -72,7 +73,6 @@ function find_path(start, end) {
         pos = front[0];
         x = pos[0];
         y = pos[1];
-        console.log(pos);
         if (x != end[0] || y != end[1]) {
             if (data[x][y] === 0) {
                 var s = (x - 1) + " " + y;
@@ -101,10 +101,14 @@ function find_path(start, end) {
             }
         }
         else
+        {
             found = true;
+            break;
+        }
         front.shift();
     }
 
+    console.log(found);
     var path = [];
     if (found) {
         let current_x = end[0];
@@ -119,4 +123,6 @@ function find_path(start, end) {
             current_y = from[1];
         }
     }
+    console.log(path);
+    return path;
 }
