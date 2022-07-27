@@ -219,24 +219,33 @@
 
             this.cameras.main.centerOn(player.x, player.y);
 
-            var jellyfish = seacreatures[0];
-            if (jellyfish.path.length > 0)
-            {
-                var current = [Math.round(jellyfish.x / 32), Math.round(jellyfish.y / 32)];
-                var target = jellyfish.path[jellyfish.path.length - 1];
-                if (current[1] === target[0] && current[0] === target[1]) {
-                    jellyfish.path.pop();
+            for (var i = 0; i < seacreatures.length; i++) {
+                var jellyfish = seacreatures[i];
+                if (jellyfish) {
+                    if (jellyfish.path.length > 0) {
+                        var current = [Math.round(jellyfish.x / 32), Math.round(jellyfish.y / 32)];
+                        var target = jellyfish.path[jellyfish.path.length - 1];
+                        if (current[1] === target[0] && current[0] === target[1]) {
+                            jellyfish.path.pop();
+                        }
+                        var angle = Phaser.Math.Angle.Between(jellyfish.x, jellyfish.y, target[1] * 32, target[0] * 32);
+                        jellyfish.setVelocityX(200 * Math.cos(angle));
+                        jellyfish.setVelocityY(200 * Math.sin(angle));
+                        if (jellyfish.health < 0) {
+                            jellyfish.destroy();
+                            seacreatures.splice(seacreatures.indexOf(jellyfish), 1);
+                        }
+                    }
+                    else {
+                        jellyfish.setVelocityX(0);
+                        jellyfish.setVelocityY(0);
+                        if (jellyfish.health < 0) {
+                            jellyfish.destroy();
+                            seacreatures.splice(seacreatures.indexOf(jellyfish), 1);
+                        }
+                    }
                 }
-                var angle = Phaser.Math.Angle.Between(jellyfish.x, jellyfish.y, target[1] * 32, target[0] * 32);
-                jellyfish.setVelocityX(100 * Math.cos(angle));
-                jellyfish.setVelocityY(100 * Math.sin(angle));
             }
-            else
-            {
-                jellyfish.setVelocityX(0);
-                jellyfish.setVelocityY(0);
-            }
-
             if (shooting_state) {
                 if (shoot_cool_down && gun_type == "machine") {
                     angle = Phaser.Math.Angle.Between(player.x, player.y, mark.x, mark.y);
@@ -283,7 +292,7 @@
 
         function bullet_hit(obj1, obj2) {
             obj1.destroy();
-            obj2.destroy();
+            obj2.damage(1);
         }
 
         function bullet_hit_wall(obj1, obj2) {
@@ -306,6 +315,7 @@
             constructor(scene, x, y, spritesheet, animation) {
                 super(scene, x, y, spritesheet, animation);
                 this.path = [];
+                this.health = 50;
                 scene.add.existing(this);
                 scene.physics.add.existing(this);
                 this.setScale(0.8);
@@ -314,6 +324,9 @@
             }
             addTween(scene, xDist, yDist, time) {
                 scene.tweens.add({ targets: this, x: xDist, y: yDist, duration: time, ease: 'Sine.easeInOut', repeat: -1, yoyo: true });
+            }
+            damage(damage) {
+                this.health -= damage;
             }
         }
 
