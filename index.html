@@ -6,16 +6,19 @@
 
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
 
+
 </head>
 
 <body>
+
+    <!-- <script src="find_path.js"></script> -->
 
     <script>
 
         var config = {
             type: Phaser.AUTO,
-            width: 1200,
-            height: 600,
+            width: 1920,
+            height: 1920,
             physics: {
                 default: 'arcade',
             },
@@ -31,17 +34,17 @@
         var game = new Phaser.Game(config);
 
         //Game Objects
-        var platforms;
         var map;
         var player;
         var mark;
-        var seacreatures = [];
 
         //Keyboard controls
         var cursors;
         var keys;
         var space;
-
+        var enemies = [];
+        var room2left;
+        var room2right;
         var jump_number;
         var graphics;
 
@@ -49,63 +52,97 @@
         var shoot_cool_down = true;
         var shooting_state = false;
 
+        var map;
+        var tileset;
+        var layer;
+        var layer_1;
+        var layer_2;
+        var layer_3;
+        var layer_4;
+
+
+        var map3;
+        var layer_3_1;
+        var layer_3_2;
+        var layer_3_3;
+        var layer_3_4;
+
         function preload() {
             this.load.image('sky', 'assets/deepblue.png');
             this.load.image('platform', 'assets/platform.png');
             this.load.image('missile', 'assets/missile.png');
             this.load.image('mark', 'assets/mark.png');
             this.load.atlas('slime', 'assets/slimesheet.png', 'assets/slimesheet.json');
+            this.load.atlas('cube', 'assets/cubespritesheet.png', 'assets/cubespritesheet.json');
             this.load.atlas('seacreatures', 'assets/seacreatures_json.png', 'assets/seacreatures_json.json');
+            this.load.image('factorytiles', 'factorytileset.png');
+            this.load.image('scifitiles', 'scifitileset.png');
+            this.load.tilemapTiledJSON('tilemap', 'maponev3.json');
 
-            this.load.tilemapTiledJSON('tilemap', 'assets/funny.json');
-            this.load.image('tilesheet1', 'assets/tileset_x1.png');
+            this.load.image('dungeontiles', 'map3/dungeontileset.png');
+            this.load.image('greydungeontiles', 'map3/greydungeontileset.png');
+            this.load.tilemapTiledJSON('tilemap3', 'map3/map3.json');
+            //this.load.tilemapTiledJSON('tilemap2','')
+
         }
 
         function create() {
-            // const map = this.make.tilemap({key:'tilemap', tileWidth: 50, tileHeight: 50 });
-            // tileset = map.addTilesetImage('tilesheet1');
-            // layer = map.createLayer('Tile Layer 1', tileset);
-            
-            // zoom
             this.cameras.main.setZoom(1);
 
-            //Set the background origin to be at (0, 0) or top left corner of the image rather than the center of the image asset
-            let background = this.add.tileSprite(0, 0, game.scale.width, game.scale.height, 'sky').setOrigin(0, 0);
+            // set_map
+            map = this.make.tilemap({ key: 'tilemap' });
+            var tileset_1 = map.addTilesetImage('factorytileset', 'factorytiles');
+            var tileset_2 = map.addTilesetImage('scifitileset', 'scifitiles');
 
-            //create all animations
-            this.anims.create({ key: 'jellyfish', frames: this.anims.generateFrameNames('seacreatures', { prefix: 'blueJellyfish', end: 32, zeroPad: 4 }), repeat: -1 });
-            this.anims.create({ key: 'greenjellyfish', frames: this.anims.generateFrameNames('seacreatures', { prefix: 'greenJellyfish', end: 39, zeroPad: 4 }), repeat: -1 });
-            this.anims.create({ key: 'octopus', frames: this.anims.generateFrameNames('seacreatures', { prefix: 'octopus', end: 24, zeroPad: 4 }), repeat: -1 });
+            layer_1 = map.createStaticLayer('floorscifi', tileset_2);
+            layer_3 = map.createStaticLayer('floorfactory', tileset_1);
+            layer_2 = map.createStaticLayer('wallsscifi', tileset_2);
+            layer_4 = map.createStaticLayer('wallsfactory', tileset_1);
 
-            let playerAnimations = {};
-            var idle = this.anims.create({ key: 'slime_idle', frames: this.anims.generateFrameNames('slime', { prefix: 'slime_idle', end: 5, zeroPad: 2 }), repeat: -1, frameRate: 10 });
-            playerAnimations['idle'] = idle;
-            var left = this.anims.create({ key: 'slime_left', frames: this.anims.generateFrameNames('slime', { prefix: 'slime_left', end: 5, zeroPad: 2 }), repeat: -1, frameRate: 10 });
-            playerAnimations['left'] = left;
-            var right = this.anims.create({ key: 'slime_right', frames: this.anims.generateFrameNames('slime', { prefix: 'slime_right', end: 5, zeroPad: 2 }), repeat: -1, frameRate: 10 });
-            playerAnimations['right'] = right;
+            layer_2.setCollisionByExclusion([-1]);
+            layer_4.setCollisionByExclusion([-1]);
 
-            //Create the platforms and the player character set to collide with the platforms
-            createPlatforms(this);
-
-            // entity
+            // shoot mark and player
             mark = new Mark(this, 0, 0, 'mark');
 
-            player = new Player(this, 400, 400, 'slime', playerAnimations);
-            this.physics.add.collider(player, platforms);
+            let playerAnimations = {};
+            var idle = this.anims.create({ key: 'cube_idle', frames: this.anims.generateFrameNames('cube', { prefix: 'Idle_', end: 6, zeroPad: 1 }), repeat: -1, frameRate: 6 });
+            playerAnimations['idle'] = idle;
+            var left = this.anims.create({ key: 'cube_left', frames: this.anims.generateFrameNames('cube', { prefix: 'Left_', end: 6, zeroPad: 1 }), repeat: -1, frameRate: 6 });
+            playerAnimations['left'] = left;
+            var right = this.anims.create({ key: 'cube_right', frames: this.anims.generateFrameNames('cube', { prefix: 'Right_', end: 6, zeroPad: 1 }), repeat: -1, frameRate: 6 });
+            playerAnimations['right'] = right;
+
+            map = this.make.tilemap({ key: 'tilemap' });
+            var tileset_1 = map.addTilesetImage('factorytileset', 'factorytiles');
+            var tileset_2 = map.addTilesetImage('scifitileset', 'scifitiles');
+            layer_1 = map.createStaticLayer('floorscifi', tileset_2);
+            layer_3 = map.createStaticLayer('floorfactory', tileset_1);
+            layer_2 = map.createStaticLayer('wallsscifi', tileset_2);
+            layer_4 = map.createStaticLayer('wallsfactory', tileset_1);
+
+            layer_2.setCollisionByExclusion([-1]);
+            layer_4.setCollisionByExclusion([-1]);
+
+            // map.setCollision( [2, 3, 6, 9, 10, 39, 40, 46, 47, 76, 77, 109, 110, 111, 306, 150, 114, 146, 147, 148, 183, 184, 185, 298, 299, 305, 158, 335, 336, 342, 343, 372, 373, 374, 379, 378, 84, 337, 7, 376]);
+
+
+            mark = new Mark(this, 0, 0, 'mark');
+            player = new Player(this, 352, 640, 'slime', playerAnimations);
+            this.physics.add.collider(player, layer_2);
+            this.physics.add.collider(player, layer_4);
             player.play(player.animations['idle']);
 
-            let jellyfish = new SeaCreature(this, 200, 150, 'seacreatures', 'jellyfish');
-            jellyfish.addTween(this, jellyfish.x, jellyfish.y + 20, 2000);
-            seacreatures.push(jellyfish);
-            //making my mark
-            let greenjellyfish = new SeaCreature(this, 200, 150, 'seacreatures', 'greenjellyfish');
-            greenjellyfish.addTween(this, greenjellyfish.x - 20, greenjellyfish.y + 300, 2000);
-            seacreatures.push(greenjellyfish);
+            // enemy
+            room2right = new Enemy(this, 480, 1408, 'slime', playerAnimations);
+            room2left = new Enemy(this, 192, 1408, 'slime', playerAnimations);
+            enemies.push(room2left);
+            enemies.push(room2right);
+            room2right.play(player.animations['idle']);
+            room2left.play(player.animations['idle']);
+            navigate(this, player, room2right);
+            navigate(this, player, room2left);
 
-            let octopus = new SeaCreature(this, 700, 300, 'seacreatures', 'octopus');
-            octopus.addTween(this, octopus.x + 400, octopus.y, 2000);
-            seacreatures.push(octopus);
 
             //Set up user input
             cursors = this.input.keyboard.createCursorKeys();
@@ -118,20 +155,25 @@
             }, this);
 
             this.input.on('pointerdown', function (pointer) {
-                if(gun_type === "machine")
+                if (gun_type === "machine")
                     shooting_state = true;
-                else if(gun_type === "shotgun")
-                {
+                else if (gun_type === "shotgun") {
                     angle = Phaser.Math.Angle.Between(player.x, player.y, mark.x, mark.y);
                     var bullet;
                     bullet = new Bullet(this, player.x, player.y, 'missile', angle);
-                    bullet = new Bullet(this, player.x, player.y, 'missile', angle + 15/180*Math.PI);
-                    bullet = new Bullet(this, player.x, player.y, 'missile', angle - 15/180*Math.PI);
+                    this.physics.add.overlap(bullet, enemies, bullet_hit, null, this);
+                    this.physics.add.collider(bullet, layer_2, bullet_hit_wall, null, this);
+
+                    bullet = new Bullet(this, player.x, player.y, 'missile', angle + 15 / 180 * Math.PI);
+                    this.physics.add.overlap(bullet, enemies, bullet_hit, null, this);
+                    this.physics.add.collider(bullet, layer_2, bullet_hit_wall, null, this);
+
+                    bullet = new Bullet(this, player.x, player.y, 'missile', angle - 15 / 180 * Math.PI);
+                    this.physics.add.overlap(bullet, enemies, bullet_hit, null, this);
+                    this.physics.add.collider(bullet, layer_2, bullet_hit_wall, null, this);
+
                     shoot_cool_down = false;
                     this.time.delayedCall(1000, cool_down, [], this);
-                    this.physics.add.overlap(bullet, seacreatures, bullet_hit, null, this);
-                    this.physics.add.overlap(bullet, platforms, bullet_hit_wall, null, this);
-                    this.physics.add.collider(bullet, platforms);
                 }
             }, this);
 
@@ -140,27 +182,21 @@
                 shooting_state = false;
             }, this);
 
-
-
             graphics = this.add.graphics();
         }
 
-        function createPlatforms(scene) {
-            platforms = scene.physics.add.staticGroup();
+        function createlayer_2(scene) {
+            layer_2 = scene.physics.add.staticGroup();
 
             //basePlatform is the floor of the game
-            let basePlatform = platforms.create(game.scale.width / 2, game.scale.height - 30, 'platform');
+            let basePlatform = layer_2.create(game.scale.width / 2, game.scale.height - 30, 'platform');
             basePlatform.setScale(3, 1).refreshBody();
 
-            platforms.create(250, 250, 'platform');
-            platforms.create(950, 400, 'platform');
+            layer_2.create(250, 250, 'platform');
+            layer_2.create(950, 400, 'platform');
         }
 
         function update() {
-            //Player will not move in the x-axis unless a movement key is being pressed
-            //player.setVelocityX(0);
-
-            //Player has "drag" on the x-axis meaning they slide a bit after an input
             player.setDragX(1500);
 
             //Handle player movements
@@ -190,7 +226,7 @@
                 player.setVelocityX(0);
                 player.play(player.animations['idle'], true);
             }
-            
+
             if (keys.Q.isDown) {
                 if (gun_type === "machine")
                     gun_type = "shotgun";
@@ -200,6 +236,33 @@
 
             this.cameras.main.centerOn(player.x, player.y);
 
+            for (var i = 0; i < enemies.length; i++) {
+                var enemy = enemies[i];
+                if (enemy) {
+                    if (enemy.path.length > 0) {
+                        var current = [Math.round(enemy.x / 32), Math.round(enemy.y / 32)];
+                        var target = enemy.path[enemy.path.length - 1];
+                        if (current[1] === target[0] && current[0] === target[1]) {
+                            enemy.path.pop();
+                        }
+                        var angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, target[1] * 32, target[0] * 32);
+                        enemy.setVelocityX(200 * Math.cos(angle));
+                        enemy.setVelocityY(200 * Math.sin(angle));
+                        if (enemy.health < 0) {
+                            enemy.destroy();
+                            enemies.splice(enemies.indexOf(enemy), 1);
+                        }
+                    }
+                    else {
+                        enemy.setVelocityX(0);
+                        enemy.setVelocityY(0);
+                        if (enemy.health < 0) {
+                            enemy.destroy();
+                            enemies.splice(enemies.indexOf(enemy), 1);
+                        }
+                    }
+                }
+            }
             if (shooting_state) {
                 if (shoot_cool_down && gun_type == "machine") {
                     angle = Phaser.Math.Angle.Between(player.x, player.y, mark.x, mark.y);
@@ -207,9 +270,8 @@
                     bullet = new Bullet(this, player.x, player.y, 'missile', angle);
                     shoot_cool_down = false;
                     this.time.delayedCall(100, cool_down, [], this);
-                    this.physics.add.overlap(bullet, seacreatures, bullet_hit, null, this);
-                    this.physics.add.overlap(bullet, platforms, bullet_hit_wall, null, this);
-                    this.physics.add.collider(bullet, platforms);
+                    this.physics.add.overlap(bullet, enemies, bullet_hit, null, this);
+                    this.physics.add.collider(bullet, layer_2, bullet_hit_wall, null, this);
                 }
             }
         }
@@ -247,7 +309,7 @@
 
         function bullet_hit(obj1, obj2) {
             obj1.destroy();
-            obj2.destroy();
+            obj2.damage(1);
         }
 
         function bullet_hit_wall(obj1, obj2) {
@@ -261,23 +323,176 @@
                 this.animations = animations;
                 scene.add.existing(this);
                 scene.physics.add.existing(this);
-                this.setScale(2);
+                this.setScale(0.8);
                 this.setCollideWorldBounds(true);
             }
         }
 
-        class SeaCreature extends Phaser.Physics.Arcade.Sprite {
+        class Enemy extends Phaser.Physics.Arcade.Sprite {
             constructor(scene, x, y, spritesheet, animation) {
                 super(scene, x, y, spritesheet, animation);
+                this.path = [];
+                this.health = 50;
                 scene.add.existing(this);
                 scene.physics.add.existing(this);
-                this.setScale(0.8);
+                this.setScale(0.3);
                 this.play(animation);
+                //navigate(player, this);
             }
-
             addTween(scene, xDist, yDist, time) {
                 scene.tweens.add({ targets: this, x: xDist, y: yDist, duration: time, ease: 'Sine.easeInOut', repeat: -1, yoyo: true });
             }
+            damage(damage) {
+                this.health -= damage;
+            }
+        }
+
+        function navigate(scene, player, enemy) {
+            var start = [Math.round(enemy.y / 32), Math.round(enemy.x / 32)];
+            var end = [Math.round(player.y / 32), Math.round(player.x / 32)];
+            // console.log("start");
+            // console.log(start);
+            // console.log(end);
+            // console.log("stop");
+            enemy.path = find_path(start, end);
+            scene.time.delayedCall(2000, navigate, [scene, player, enemy], scene);
+        }
+
+        function find_path(start, end) {
+            var data = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 2, 3, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 9, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 9, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 77, 0, 0, 0, 0, 0, 0, 109, 110, 111, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 77, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 114, 0, 0, 0, 0, 0, 0, 146, 147, 148, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 114, 0, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 183, 184, 185, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 147, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 184, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 111, 111, 111, 109, 110, 111, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 148, 148, 148, 146, 147, 148, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 0, 109, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 0, 146, 147, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 299, 0, 0, 0, 0, 0, 0, 0, 0, 0, 305, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 299, 0, 109, 110, 0, 0, 0, 0, 0, 0, 305, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 46, 335, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 343, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 46, 335, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 343, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 46, 373, 374, 374, 374, 47, 0, 0, 39, 374, 374, 379, 378, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 372, 373, 374, 374, 374, 374, 374, 374, 374, 47, 0, 0, 39, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 337, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 337, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 337, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 337, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 337, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 337, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 2, 3, 6, 6, 6, 6, 0, 0, 6, 6, 6, 6, 9, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 6, 0, 0, 6, 6, 6, 6, 6, 6, 6, 9, 10, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 47, 0, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 77, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 39, 6, 6, 6, 6, 7, 0, 0, 0, 0, 0, 0, 0, 84, 0, 77, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 114, 0, 0, 0, 0, 0, 0, 0, 109, 110, 111, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 84, 0, 114, 0, 110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 146, 147, 148, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 147, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 146, 147, 147, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 47, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 184, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 146, 147, 147, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 110, 0, 76, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 0, 0, 109, 110, 111, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 2, 3, 6, 6, 0, 0, 0, 0, 0, 0, 0, 6, 9, 10, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 147, 0, 76, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 0, 0, 146, 147, 148, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 39, 0, 0, 0, 0, 109, 110, 111, 111, 0, 0, 0, 0, 47, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 184, 0, 76, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 0, 0, 183, 184, 185, 0, 0, 0, 0, 0, 0, 0, 0, 6, 6, 6, 6, 6, 0, 77, 0, 0, 0, 146, 147, 148, 148, 0, 0, 0, 0, 0, 6, 6, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 109, 110, 111, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 146, 147, 148, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0],
+            [0, 0, 0, 84, 0, 299, 0, 0, 0, 0, 0, 0, 0, 0, 0, 305, 0, 0, 376, 376, 376, 376, 376, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 376, 376, 376, 376, 0, 299, 0, 0, 0, 0, 0, 0, 0, 0, 0, 305, 0, 0, 76, 0, 0, 0, 0],
+            [0, 0, 0, 46, 335, 336, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 342, 343, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 335, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 343, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 372, 373, 374, 298, 299, 0, 0, 0, 0, 342, 374, 379, 378, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 110, 0, 0, 76, 0, 0, 0, 372, 373, 374, 374, 374, 374, 374, 374, 374, 374, 374, 379, 378, 41, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 335, 376, 376, 376, 376, 376, 379, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 147, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 184, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 109, 110, 111, 111, 111, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 146, 147, 148, 148, 148, 0, 0, 0, 0, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 299, 0, 0, 0, 0, 0, 0, 0, 0, 0, 305, 0, 0, 76, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 46, 335, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 343, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 372, 373, 374, 374, 374, 374, 374, 374, 374, 374, 374, 379, 378, 41, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+            var s = start[0] + " " + start[1];
+            data[start[0]][start[1]] = 0;
+
+            var come_from = {};
+            come_from[s] = [0, 0];
+
+            var front = [];
+            front.push(start);
+
+            console.log(data[start[0]][start[1]]);
+
+            var found = false;
+            while (front.length > 0) {
+                pos = front[0];
+                x = pos[0];
+                y = pos[1];
+                if (x != end[0] || y != end[1]) {
+                    if (data[x][y] === 0) {
+                        var s = (x - 1) + " " + y;
+                        if (x > 0 && !come_from.hasOwnProperty(s)) {
+                            come_from[s] = [x, y];
+                            front.push([x - 1, y])
+                        }
+
+                        var s = (x + 1) + " " + y;
+                        if (x < data.length - 1 && !come_from.hasOwnProperty(s)) {
+                            come_from[s] = [x, y];
+                            front.push([x + 1, y])
+                        }
+
+                        var s = x + " " + (y - 1);
+                        if (y > 0 && !come_from.hasOwnProperty(s)) {
+                            come_from[s] = [x, y];
+                            front.push([x, y - 1]);
+                        }
+
+                        var s = x + " " + (y + 1);
+                        if (y < data[0].length - 1 && !come_from.hasOwnProperty(s)) {
+                            come_from[s] = [x, y];
+                            front.push([x, y + 1]);
+                        }
+                    }
+                }
+                else {
+                    found = true;
+                    break;
+                }
+                front.shift();
+            }
+
+            console.log(found);
+            var path = [];
+            if (found) {
+                let current_x = end[0];
+                let current_y = end[1];
+
+                let target_x = start[0];
+                let target_y = start[1];
+                while (current_x != target_x || current_y != target_y) {
+                    path.push([current_x, current_y]);
+                    data[current_x][current_y] = "*";
+                    var from = come_from[current_x + " " + current_y];
+                    current_x = from[0];
+                    current_y = from[1];
+                }
+            }
+            // for (var i = 0; i < 60; i++) {
+            //     var s = "";
+            //     for (var j = 0; j < 30; j++) {
+            //         s = s + data[i][j] + "   ";
+            //     }
+            //     console.log(s + "\n");
+            // }
+            return path;
         }
 
     </script>
