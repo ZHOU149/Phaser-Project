@@ -70,9 +70,6 @@
 
         }
 
-        function hit(){
-            console.log("hit");
-        }
         function create() {
             this.cameras.main.setZoom(1);
 
@@ -87,16 +84,21 @@
             playerAnimations['left'] = left;
             var right = this.anims.create({ key: 'slime_right', frames: this.anims.generateFrameNames('slime', { prefix: 'slime_right', end: 5, zeroPad: 2 }), repeat: -1, frameRate: 10 });
             playerAnimations['right'] = right;
-           
+
             map = this.make.tilemap({ key: 'tilemap'});
+            map.setCollision([0, 150]);
             var tileset_1 = map.addTilesetImage('factorytileset', 'factorytiles');
             var tileset_2 = map.addTilesetImage('scifitileset', 'scifitiles');
-            layer_1 = map.createLayer('floorscifi', tileset_2);
-            layer_3 = map.createLayer('floorfactory', tileset_1);
-            layer_2 = map.createLayer('wallsscifi', tileset_2);
-            layer_4 = map.createLayer('wallsfactory', tileset_1);
+            layer_1 = map.createStaticLayer('floorscifi', tileset_2);
+            layer_3 = map.createStaticLayer('floorfactory', tileset_1);
+            layer_2 = map.createStaticLayer('wallsscifi', tileset_2);
+            layer_4 = map.createStaticLayer('wallsfactory', tileset_1);
 
-            map.setCollision([2, 3, 6, 9, 10, 39, 40, 46, 47, 76, 77, 109, 110, 111, 306, 150, 114, 146, 147, 148, 183, 184, 185, 298, 299, 305, 158, 335, 336, 342, 343, 372, 373, 374, 379, 378, 84, 337, 7, 376]);
+            layer_2.setCollisionByExclusion([-1]);
+            layer_4.setCollisionByExclusion([-1]);
+
+            // map.setCollision( [2, 3, 6, 9, 10, 39, 40, 46, 47, 76, 77, 109, 110, 111, 306, 150, 114, 146, 147, 148, 183, 184, 185, 298, 299, 305, 158, 335, 336, 342, 343, 372, 373, 374, 379, 378, 84, 337, 7, 376]);
+
 
             mark = new Mark(this, 0, 0, 'mark');
             player = new Player(this, 500, 500, 'slime', playerAnimations);
@@ -157,6 +159,17 @@
 
 
             graphics = this.add.graphics();
+        }
+
+        function createlayer_2(scene) {
+            layer_2 = scene.physics.add.staticGroup();
+
+            //basePlatform is the floor of the game
+            let basePlatform = layer_2.create(game.scale.width / 2, game.scale.height - 30, 'platform');
+            basePlatform.setScale(3, 1).refreshBody();
+
+            layer_2.create(250, 250, 'platform');
+            layer_2.create(950, 400, 'platform');
         }
 
         function update() {
