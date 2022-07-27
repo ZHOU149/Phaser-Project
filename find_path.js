@@ -60,9 +60,6 @@ function find_path(start, end) {
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
 
-    let start = [11, 7];
-    let end = [27, 4];
-
     var s = start[0] + " " + start[1];
     var come_from = {};
     come_from[s] = [0, 0];
@@ -117,7 +114,6 @@ function find_path(start, end) {
         let target_y = start[1];
         while (current_x != target_x || current_y != target_y) {
             path.push([current_x, current_y]);
-            data[current_x][current_y] = "*";
             var from = come_from[current_x + " " + current_y];
             current_x = from[0];
             current_y = from[1];

@@ -59,11 +59,11 @@
 
         function preload() {
             this.load.image('sky', 'assets/deepblue.png');
-            this.load.image('platform', 'assets/platform.png');
             this.load.image('missile', 'assets/missile.png');
             this.load.image('mark', 'assets/mark.png');
             this.load.atlas('slime', 'assets/slimesheet.png', 'assets/slimesheet.json');
             this.load.atlas('seacreatures', 'assets/seacreatures_json.png', 'assets/seacreatures_json.json');
+            
             this.load.image('factorytiles', 'factorytileset.png');
             this.load.image('scifitiles', 'scifitileset.png');
             this.load.tilemapTiledJSON('tilemap', 'fourlayer.json');
@@ -120,7 +120,7 @@
 
             // enemy
             this.anims.create({ key: 'jellyfish', frames: this.anims.generateFrameNames('seacreatures', { prefix: 'blueJellyfish', end: 32, zeroPad: 4 }), repeat: -1 });
-            let jellyfish = new SeaCreature(this, 200, 150, 'seacreatures', 'jellyfish');
+            let jellyfish = new Enemy(this, 200, 150, 'seacreatures', 'jellyfish');
             jellyfish.addTween(this, jellyfish.x, jellyfish.y + 20, 2000);
             seacreatures.push(jellyfish);
 
@@ -281,7 +281,7 @@
             }
         }
 
-        class SeaCreature extends Phaser.Physics.Arcade.Sprite {
+        class Enemy extends Phaser.Physics.Arcade.Sprite {
             constructor(scene, x, y, spritesheet, animation) {
                 super(scene, x, y, spritesheet, animation);
                 scene.add.existing(this);
