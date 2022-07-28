@@ -67,13 +67,16 @@
         var layer_3_3;
         var layer_3_4;
 
+        function GameScene() {
+            Phaser.Scene.call(this, { key: 'GameScene' });
+        }
+
         function preload() {
             this.load.image('sky', 'assets/deepblue.png');
             this.load.image('missile', 'assets/missile.png');
             this.load.image('mark', 'assets/mark.png');
-            this.load.atlas('slime', 'assets/slimesheet.png', 'assets/slimesheet.json');
             this.load.atlas('cube', 'assets/cubespritesheet.png', 'assets/cubespritesheet.json');
-            this.load.atlas('seacreatures', 'assets/seacreatures_json.png', 'assets/seacreatures_json.json');
+            this.load.atlas('enemy_1', 'assets/enemy_1.png', 'assets/enemy_1.json');
             this.load.image('factorytiles', 'factorytileset.png');
             this.load.image('scifitiles', 'scifitileset.png');
             this.load.tilemapTiledJSON('tilemap', 'maponev3.json');
@@ -81,7 +84,6 @@
             this.load.image('dungeontiles', 'map3/dungeontileset.png');
             this.load.image('greydungeontiles', 'map3/greydungeontileset.png');
             this.load.tilemapTiledJSON('tilemap3', 'map3/map3v2.json');
-            //this.load.tilemapTiledJSON('tilemap2','')
 
             this.load.image('factorytiles', 'factorytileset.png');
             this.load.image('scifitiles', 'scifitileset.png');
@@ -131,14 +133,18 @@
 
 
             mark = new Mark(this, 0, 0, 'mark');
-            player = new Player(this, 352, 640, 'slime', playerAnimations);
+            player = new Player(this, 352, 640, 'cube', playerAnimations);
             this.physics.add.collider(player, layer_2);
             this.physics.add.collider(player, layer_4);
             player.play(player.animations['idle']);
 
             // enemy
-            room2right = new Enemy(this, 480, 1408, 'slime', playerAnimations);
-            room2left = new Enemy(this, 192, 1408, 'slime', playerAnimations);
+            let enemy_1_Animations = {};
+            var idle = this.anims.create({ key: 'enemy_1_idle', frames: this.anims.generateFrameNames('enemy_1', { prefix: 'mech-unit-export', end: 7, zeroPad: 1 }), repeat: -1, frameRate: 6 });
+            enemy_1_Animations['idle'] = idle;
+
+            room2right = new Enemy(this, 480, 1408, 'enemy_1', enemy_1_Animations);
+            room2left = new Enemy(this, 192, 1408, 'enemy_1', enemy_1_Animations);
             enemies.push(room2left);
             enemies.push(room2right);
             room2right.play(player.animations['idle']);
@@ -247,11 +253,10 @@
                         }
                     }
                     else {
-                        if(distance < 100 && enemy.cool_down)
-                        {
+                        if (distance < 100 && enemy.cool_down) {
                             enemy.cool_down = false;
                             this.time.delayedCall(2000, enemy_cool_down, [enemy], this);
-                            angle = Phaser.Math.Angle.Between(enemy.x,enemy.y, player.x, player.y);
+                            angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, player.x, player.y);
                             var bullet;
                             bullet = new Bullet(this, enemy.x, enemy.y, 'missile', angle);
                             this.physics.add.overlap(bullet, player, bullet_hit, null, this);
@@ -337,8 +342,7 @@
 
             damage(damage) {
                 this.health -= damage;
-                if(this.health < 0)
-                {
+                if (this.health < 0) {
                     console.log("fail");
                 }
             }
