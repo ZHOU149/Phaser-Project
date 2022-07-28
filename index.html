@@ -73,13 +73,13 @@
 
         function preload() {
             this.load.image('sky', 'assets/deepblue.png');
-            this.load.image('missile', 'assets/11.png');
+            this.load.image('missile', 'assets/missile.png');
             this.load.image('mark', 'assets/mark.png');
             this.load.atlas('cube', 'assets/cubespritesheet.png', 'assets/cubespritesheet.json');
             this.load.atlas('enemy_1', 'assets/enemy_1.png', 'assets/enemy_1.json');
             this.load.image('factorytiles', 'factorytileset.png');
             this.load.image('scifitiles', 'scifitileset.png');
-            this.load.tilemapTiledJSON('tilemap', 'maponev4.json');
+            this.load.tilemapTiledJSON('tilemap', 'maponev3.json');
 
             this.load.image('dungeontiles', 'map3/dungeontileset.png');
             this.load.image('greydungeontiles', 'map3/greydungeontileset.png');
@@ -87,12 +87,12 @@
 
             this.load.image('factorytiles', 'factorytileset.png');
             this.load.image('scifitiles', 'scifitileset.png');
-            this.load.tilemapTiledJSON('tilemap', 'maponev4.json');
+            this.load.tilemapTiledJSON('tilemap', 'maponev1.json');
 
         }
 
         function create() {
-            this.cameras.main.setZoom(1.5);
+            this.cameras.main.setZoom(2);
 
             // set_map
             map = this.make.tilemap({ key: 'tilemap' });
@@ -304,7 +304,7 @@
                 super(scene, x, y, spritesheet);
                 scene.add.existing(this);
                 scene.physics.add.existing(this);
-                this.setAngle(angle * (180 / Math.PI));
+                this.setAngle(angle * (180 / Math.PI) + 225);
                 this.setScale(0.1);
                 this.setVelocityX(700 * Math.cos(angle));
                 this.setVelocityY(700 * Math.sin(angle));
