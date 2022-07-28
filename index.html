@@ -81,7 +81,7 @@
             this.load.image('factorytiles', 'factorytileset.png');
             this.load.image('scifitiles', 'scifitileset.png');
             this.load.image('health', 'assets/health.png');
-            this.load.tilemapTiledJSON('tilemap', 'maponev3.json');
+            this.load.tilemapTiledJSON('tilemap', 'assets/maponev3.json');
 
             this.load.image('dungeontiles', 'map3/dungeontileset.png');
             this.load.image('greydungeontiles', 'map3/greydungeontileset.png');
@@ -118,20 +118,6 @@
             playerAnimations['left'] = left;
             var right = this.anims.create({ key: 'cube_right', frames: this.anims.generateFrameNames('cube', { prefix: 'Right_', end: 6, zeroPad: 1 }), repeat: -1, frameRate: 6 });
             playerAnimations['right'] = right;
-
-          // //  map = this.make.tilemap({ key: 'tilemap' });
-          //   var tileset_1 = map.addTilesetImage('factorytileset', 'factorytiles');
-          //   var tileset_2 = map.addTilesetImage('scifitileset', 'scifitiles');
-          //   layer_1 = map.createStaticLayer('floorscifi', tileset_2);
-          //   layer_3 = map.createStaticLayer('floorfactory', tileset_1);
-          //   layer_2 = map.createStaticLayer('wallsscifi', tileset_2);
-          //   layer_4 = map.createStaticLayer('wallsfactory', tileset_1);
-          //
-          //   layer_2.setCollisionByExclusion([-1]);
-          //   layer_4.setCollisionByExclusion([-1]);//
-
-            // map.setCollision( [2, 3, 6, 9, 10, 39, 40, 46, 47, 76, 77, 109, 110, 111, 306, 150, 114, 146, 147, 148, 183, 184, 185, 298, 299, 305, 158, 335, 336, 342, 343, 372, 373, 374, 379, 378, 84, 337, 7, 376]);
-
 
             mark = new Mark(this, 0, 0, 'mark');
             player = new Player(this, 352, 640, 'cube', playerAnimations);
@@ -212,7 +198,6 @@
             }, this);
 
             this.input.on('pointerup', function (pointer) {
-                console.log("up");
                 shooting_state = false;
             }, this);
 
@@ -368,7 +353,7 @@
             animations;
             constructor(scene, x, y, spritesheet, animations) {
                 super(scene, x, y, spritesheet);
-                this.health = 35;
+                this.health = 30;
                 this.animations = animations;
                 scene.add.existing(this);
                 scene.physics.add.existing(this);
@@ -408,10 +393,6 @@
         function navigate(scene, player, enemy) {
             var start = [Math.round(enemy.y / 32), Math.round(enemy.x / 32)];
             var end = [Math.round(player.y / 32), Math.round(player.x / 32)];
-            // console.log("start");
-            // console.log(start);
-            // console.log(end);
-            // console.log("stop");
             enemy.path = find_path(start, end);
             scene.time.delayedCall(2000, navigate, [scene, player, enemy], scene);
         }
@@ -486,8 +467,6 @@
             var front = [];
             front.push(start);
 
-            console.log(data[start[0]][start[1]]);
-
             var found = false;
             while (front.length > 0) {
                 pos = front[0];
@@ -496,7 +475,6 @@
                 if (x != end[0] || y != end[1]) {
                     if (data[x][y] === 0) {
                         var r_list = [1, 2, 3, 4];
-                        console.log("start");
                         for (var z = 0; z < 4; z++) {
                             let r = Math.floor(Math.random() * r_list.length);
                             var random_dir = r_list[r];
@@ -554,13 +532,6 @@
                     current_y = from[1];
                 }
             }
-            // for (var i = 0; i < 60; i++) {
-            //     var s = "";
-            //     for (var j = 0; j < 30; j++) {
-            //         s = s + data[i][j] + "   ";
-            //     }
-            //     console.log(s + "\n");
-            // }
             return path;
         }
 
