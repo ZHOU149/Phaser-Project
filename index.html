@@ -247,6 +247,16 @@
                         }
                     }
                     else {
+                        if(distance < 100 && enemy.cool_down)
+                        {
+                            enemy.cool_down = false;
+                            this.time.delayedCall(2000, enemy_cool_down, [enemy], this);
+                            angle = Phaser.Math.Angle.Between(enemy.x,enemy.y, player.x, player.y);
+                            var bullet;
+                            bullet = new Bullet(this, enemy.x, enemy.y, 'missile', angle);
+                            this.physics.add.overlap(bullet, player, bullet_hit, null, this);
+                            this.physics.add.collider(bullet, layer_2, bullet_hit_wall, null, this);
+                        }
                         enemy.setVelocityX(0);
                         enemy.setVelocityY(0);
                         if (enemy.health < 0) {
@@ -267,6 +277,10 @@
                     this.physics.add.collider(bullet, layer_2, bullet_hit_wall, null, this);
                 }
             }
+        }
+
+        function enemy_cool_down(enemy) {
+            enemy.cool_down = true;
         }
 
         function cool_down() {
@@ -313,11 +327,20 @@
             animations;
             constructor(scene, x, y, spritesheet, animations) {
                 super(scene, x, y, spritesheet);
+                this.health = 20;
                 this.animations = animations;
                 scene.add.existing(this);
                 scene.physics.add.existing(this);
                 this.setScale(0.8);
                 this.setCollideWorldBounds(true);
+            }
+
+            damage(damage) {
+                this.health -= damage;
+                if(this.health < 0)
+                {
+                    console.log("fail");
+                }
             }
         }
 
@@ -326,6 +349,7 @@
                 super(scene, x, y, spritesheet, animation);
                 this.path = [];
                 this.health = 50;
+                this.cool_down = true;
                 scene.add.existing(this);
                 scene.physics.add.existing(this);
                 this.setScale(0.3);
