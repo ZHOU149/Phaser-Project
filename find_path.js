@@ -63,7 +63,7 @@ function find_path(start, end) {
     var s = start[0] + " " + start[1];
     var come_from = {};
     come_from[s] = [0, 0];
-    
+
 
     var front = [];
     front.push(start);
