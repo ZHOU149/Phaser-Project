@@ -76,7 +76,7 @@
             this.load.atlas('seacreatures', 'assets/seacreatures_json.png', 'assets/seacreatures_json.json');
             this.load.image('factorytiles', 'factorytileset.png');
             this.load.image('scifitiles', 'scifitileset.png');
-            this.load.tilemapTiledJSON('tilemap', 'maponev3.json');
+            this.load.tilemapTiledJSON('tilemap', 'maponev4.json');
 
             this.load.image('dungeontiles', 'map3/dungeontileset.png');
             this.load.image('greydungeontiles', 'map3/greydungeontileset.png');
@@ -85,12 +85,12 @@
 
             this.load.image('factorytiles', 'factorytileset.png');
             this.load.image('scifitiles', 'scifitileset.png');
-            this.load.tilemapTiledJSON('tilemap', 'maponev1.json');
+            this.load.tilemapTiledJSON('tilemap', 'maponev4.json');
 
         }
 
         function create() {
-            this.cameras.main.setZoom(2);
+            this.cameras.main.setZoom(1.5);
 
             // set_map
             map = this.make.tilemap({ key: 'tilemap' });
