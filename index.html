@@ -90,7 +90,7 @@
         }
 
         function create() {
-            this.cameras.main.setZoom(1);
+            this.cameras.main.setZoom(2);
 
             // set_map
             map = this.make.tilemap({ key: 'tilemap' });
@@ -188,17 +188,6 @@
             graphics = this.add.graphics();
         }
 
-        function createlayer_2(scene) {
-            layer_2 = scene.physics.add.staticGroup();
-
-            //basePlatform is the floor of the game
-            let basePlatform = layer_2.create(game.scale.width / 2, game.scale.height - 30, 'platform');
-            basePlatform.setScale(3, 1).refreshBody();
-
-            layer_2.create(250, 250, 'platform');
-            layer_2.create(950, 400, 'platform');
-        }
-
         function update() {
             player.setDragX(1500);
 
@@ -242,7 +231,8 @@
             for (var i = 0; i < enemies.length; i++) {
                 var enemy = enemies[i];
                 if (enemy) {
-                    if (enemy.path.length > 0) {
+                    var distance = Math.sqrt((enemy.x - player.x) ** 2 + (enemy.y - player.y) ** 2);
+                    if (enemy.path.length > 0 && distance > 100 && distance < 700) {
                         var current = [Math.round(enemy.x / 32), Math.round(enemy.y / 32)];
                         var target = enemy.path[enemy.path.length - 1];
                         if (current[1] === target[0] && current[0] === target[1]) {
@@ -440,28 +430,40 @@
                 y = pos[1];
                 if (x != end[0] || y != end[1]) {
                     if (data[x][y] === 0) {
-                        var s = (x - 1) + " " + y;
-                        if (x > 0 && !come_from.hasOwnProperty(s)) {
-                            come_from[s] = [x, y];
-                            front.push([x - 1, y])
-                        }
-
-                        var s = (x + 1) + " " + y;
-                        if (x < data.length - 1 && !come_from.hasOwnProperty(s)) {
-                            come_from[s] = [x, y];
-                            front.push([x + 1, y])
-                        }
-
-                        var s = x + " " + (y - 1);
-                        if (y > 0 && !come_from.hasOwnProperty(s)) {
-                            come_from[s] = [x, y];
-                            front.push([x, y - 1]);
-                        }
-
-                        var s = x + " " + (y + 1);
-                        if (y < data[0].length - 1 && !come_from.hasOwnProperty(s)) {
-                            come_from[s] = [x, y];
-                            front.push([x, y + 1]);
+                        var r_list = [1, 2, 3, 4];
+                        console.log("start");
+                        for (var z = 0; z < 4; z++) {
+                            let r = Math.floor(Math.random() * r_list.length);
+                            var random_dir = r_list[r];
+                            r_list.splice(r, 1);
+                            if (random_dir === 1) {
+                                var s = (x - 1) + " " + y;
+                                if (x > 0 && !come_from.hasOwnProperty(s)) {
+                                    come_from[s] = [x, y];
+                                    front.push([x - 1, y])
+                                }
+                            }
+                            else if (random_dir === 2) {
+                                var s = (x + 1) + " " + y;
+                                if (x < data.length - 1 && !come_from.hasOwnProperty(s)) {
+                                    come_from[s] = [x, y];
+                                    front.push([x + 1, y])
+                                }
+                            }
+                            else if (random_dir === 3) {
+                                var s = x + " " + (y - 1);
+                                if (y > 0 && !come_from.hasOwnProperty(s)) {
+                                    come_from[s] = [x, y];
+                                    front.push([x, y - 1]);
+                                }
+                            }
+                            else {
+                                var s = x + " " + (y + 1);
+                                if (y < data[0].length - 1 && !come_from.hasOwnProperty(s)) {
+                                    come_from[s] = [x, y];
+                                    front.push([x, y + 1]);
+                                }
+                            }
                         }
                     }
                 }
@@ -472,7 +474,6 @@
                 front.shift();
             }
 
-            console.log(found);
             var path = [];
             if (found) {
                 let current_x = end[0];
