@@ -303,7 +303,7 @@
                 super(scene, x, y, spritesheet);
                 scene.add.existing(this);
                 scene.physics.add.existing(this);
-                this.setAngle(angle * (180 / Math.PI) + 225);
+                this.setAngle(angle * (180 / Math.PI));
                 this.setScale(0.1);
                 this.setVelocityX(700 * Math.cos(angle));
                 this.setVelocityY(700 * Math.sin(angle));
