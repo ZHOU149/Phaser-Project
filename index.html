@@ -272,7 +272,7 @@
                     var y = enemy.y
                     enemy.health_bar.x = x - 1;
                     enemy.health_bar.y = y - 25;
-                    enemy.health_bar.width = player.health*1;
+                    enemy.health_bar.width = enemy.health*1;
                     var distance = Math.sqrt((enemy.x - player.x) ** 2 + (enemy.y - player.y) ** 2);
                     if (enemy.path.length > 0 && distance > 100 && distance < 700) {
                         var current = [Math.round(enemy.x / 32), Math.round(enemy.y / 32)];
