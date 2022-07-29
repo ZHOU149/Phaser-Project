@@ -1,0 +1,215 @@
+{
+  "frames": [
+    {
+      "filename": "alien-enemy-flying1",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 52,
+        "h": 54
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 24,
+        "y": 1,
+        "w": 52,
+        "h": 54
+      },
+      "sourceSize": {
+        "w": 83,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "alien-enemy-flying5",
+      "frame": {
+        "x": 0,
+        "y": 54,
+        "w": 52,
+        "h": 54
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 24,
+        "y": 4,
+        "w": 52,
+        "h": 54
+      },
+      "sourceSize": {
+        "w": 83,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "alien-enemy-flying3",
+      "frame": {
+        "x": 0,
+        "y": 108,
+        "w": 52,
+        "h": 53
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 24,
+        "y": 3,
+        "w": 52,
+        "h": 53
+      },
+      "sourceSize": {
+        "w": 83,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "alien-enemy-flying7",
+      "frame": {
+        "x": 0,
+        "y": 161,
+        "w": 52,
+        "h": 53
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 24,
+        "y": 3,
+        "w": 52,
+        "h": 53
+      },
+      "sourceSize": {
+        "w": 83,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "alien-enemy-flying2",
+      "frame": {
+        "x": 0,
+        "y": 214,
+        "w": 54,
+        "h": 51
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 24,
+        "y": 4,
+        "w": 54,
+        "h": 51
+      },
+      "sourceSize": {
+        "w": 83,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "alien-enemy-flying6",
+      "frame": {
+        "x": 52,
+        "y": 0,
+        "w": 54,
+        "h": 51
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 24,
+        "y": 7,
+        "w": 54,
+        "h": 51
+      },
+      "sourceSize": {
+        "w": 83,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "alien-enemy-flying4",
+      "frame": {
+        "x": 52,
+        "y": 51,
+        "w": 54,
+        "h": 50
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 24,
+        "y": 6,
+        "w": 54,
+        "h": 50
+      },
+      "sourceSize": {
+        "w": 83,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "alien-enemy-flying8",
+      "frame": {
+        "x": 52,
+        "y": 101,
+        "w": 54,
+        "h": 50
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 24,
+        "y": 6,
+        "w": 54,
+        "h": 50
+      },
+      "sourceSize": {
+        "w": 83,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  ],
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "flyingenemy.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 106,
+      "h": 265
+    },
+    "scale": 1
+  }
+}
