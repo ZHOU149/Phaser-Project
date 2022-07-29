@@ -296,11 +296,11 @@
         {
          "columns":16,
          "firstgid":1,
-         "image":"Dungeon_Tileset.png",
+         "image":"greydungeontileset.png",
          "imageheight":640,
          "imagewidth":512,
          "margin":0,
-         "name":"greytileset",
+         "name":"greydungeontileset",
          "spacing":0,
          "tilecount":320,
          "tileheight":32,
@@ -322,7 +322,7 @@
         {
          "columns":4,
          "firstgid":1172,
-         "image":"Dungeon.png",
+         "image":"dungeontileset.png",
          "imageheight":896,
          "imagewidth":128,
          "margin":0,
