@@ -343,6 +343,7 @@
 
                 if (enemies.length === 0) {
                     if (current_level === 1) {
+                        player.health_bar.width = 0;
                         current_level = 2;
                         level_2(this);
                     }
@@ -376,6 +377,7 @@
                             enemy.setVelocityX(200 * Math.cos(angle));
                             enemy.setVelocityY(200 * Math.sin(angle));
                             if (enemy.health < 0) {
+                                enemy.health_bar.width = 0;
                                 enemy.play(enemy.animations['death']);
                                 this.time.delayedCall(1000, destroy, [enemy], this);
                                 enemy.setVelocityX(0);
