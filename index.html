@@ -75,28 +75,25 @@
         }
 
         function preload() {
-            this.load.image('sky', 'assets/deepblue.png');
-            this.load.image('missile', 'assets/missile.png');
+            this.load.image('missile', 'assets/player/missile.png');
             this.load.image('enemymissile', 'assets/14.png');
-            this.load.image('mark', 'assets/target.png');
-            this.load.atlas('cube', 'assets/cubespritesheet.png', 'assets/cubespritesheet.json');
-            this.load.atlas('enemy_1', 'assets/enemy_1.png', 'assets/enemy_1.json');
-            this.load.atlas('explosion', 'assets/explosion.png', 'assets/explosion.json')
-            this.load.image('factorytiles', 'factorytileset.png');
-            this.load.image('scifitiles', 'scifitileset.png');
+            this.load.image('mark', 'assets/player/target.png');
+            this.load.image('factorytiles', 'assets/level1/factorytileset.png');
+            this.load.image('scifitiles', 'assets/level1/scifitileset.png');
             this.load.image('health', 'assets/health.png');
-            this.load.tilemapTiledJSON('tilemap', 'assets/maponev6.json');
             this.load.image('lose', 'youdied.png');
-            this.load.image('dungeontiles', 'map3/dungeontileset.png');
-            this.load.image('greydungeontileset', 'map3/greydungeontileset.png');
-            this.load.tilemapTiledJSON('tilemap3', 'map3/map3v2.json');
+            this.load.image('dungeontiles', 'assets/level2/dungeontileset.png');
+            this.load.image('greydungeontileset', 'assets/level2/greydungeontileset.png');
+            this.load.image('machine_gun', 'assets/player/machine_gun.png');
+            this.load.image('shotgun', 'assets/player/shotgun.png');
 
-            this.load.image('factorytiles', 'factorytileset.png');
-            this.load.image('scifitiles', 'scifitileset.png');
-
-            this.load.atlas('boss', 'flyingenemy.png', 'flyingenemy.json');
-
-
+            this.load.atlas('boss', 'assets/enemy/flyingenemy/flyingenemy.png', 'assets/enemy/flyingenemy/flyingenemy.json');
+            this.load.atlas('cube', 'assets/player/cubespritesheet.png', 'assets/player/cubespritesheet.json');
+            this.load.atlas('enemy_1', 'assets/enemy/enemy_1/enemy_1.png', 'assets/enemy/enemy_1/enemy_1.json');
+            this.load.atlas('explosion', 'assets/enemy/enemy_1/explosion.png', 'assets/enemy/enemy_1/explosion.json')
+           
+            this.load.tilemapTiledJSON('tilemap', 'assets/level1/maponev6.json');
+            this.load.tilemapTiledJSON('tilemap3', 'assets/level2/map3v2.json');
         }
         function level_1(scene) {
             // set_map
