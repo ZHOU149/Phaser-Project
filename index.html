@@ -634,7 +634,7 @@
                 super(scene, x, y, spritesheet, animation);
                 this.type = type;
                 if (type === "melee") {
-                    this.min_distance = 30;
+                    this.min_distance = 50;
                     this.speed = 400;
                     this.health = 25;
                 }
@@ -714,7 +714,7 @@
             var start = [Math.round(enemy.y / 32), Math.round(enemy.x / 32)];
             var end = [Math.round(player.y / 32), Math.round(player.x / 32)];
             enemy.path = find_path(start, end);
-            scene.time.delayedCall(500, navigate, [scene, player, enemy], scene);
+            scene.time.delayedCall(200, navigate, [scene, player, enemy], scene);
         }
 
         function find_path(start, end) {
