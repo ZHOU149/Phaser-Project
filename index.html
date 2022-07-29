@@ -438,7 +438,7 @@
                         enemy.health_bar.y = y - 25;
                         enemy.health_bar.width = enemy.health * 1;
                         var distance = Math.sqrt((enemy.x - player.x) ** 2 + (enemy.y - player.y) ** 2);
-                        if (enemy.path.length > 0 && distance > enemy.min_distance && distance < 700) {
+                        if (enemy.path.length > 0 && distance > enemy.min_distance && distance < 400) {
                             var current = [Math.round(enemy.x / 32), Math.round(enemy.y / 32)];
                             var target = enemy.path[enemy.path.length - 1];
                             if (current[1] === target[0] && current[0] === target[1]) {
@@ -613,7 +613,7 @@
                 super(scene, x, y, spritesheet, animation);
                 this.animations = animation;
                 this.path = [];
-                this.health = 50;
+                this.health = 100;
                 this.cool_down = true;
                 scene.add.existing(this);
                 scene.physics.add.existing(this);
@@ -634,7 +634,7 @@
                 super(scene, x, y, spritesheet, animation);
                 this.type = type;
                 if (type === "melee") {
-                    this.min_distance = 50;
+                    this.min_distance = 30;
                     this.speed = 400;
                     this.health = 25;
                 }
