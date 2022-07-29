@@ -80,6 +80,14 @@
         var layer_3_3;
         var layer_3_4;
 
+        var final_map;
+
+        // sound
+        var music;
+        var shoot_sound;
+        var shoot_shotgun;
+        var death_explosion;
+        var hit_oof
         function GameScene() {
             Phaser.Scene.call(this, { key: 'GameScene' });
         }
@@ -104,6 +112,13 @@
 
             this.load.tilemapTiledJSON('tilemap', 'assets/level1/maponev6.json');
             this.load.tilemapTiledJSON('tilemap3', 'assets/level2/map3v2.json');
+            this.load.tilemapTiledJSON('tilemap_final', 'assets/level3/map2v1.json');
+
+            this.load.audio('bgm', ['sound/Bipedal_Mech.mp3']);
+            this.load.audio('laser', ['sound/laser.mp3']);
+            this.load.audio('shotgun', ['sound/shotgun1.mp3']);
+            this.load.audio('deathsound', ['sound/deathexplosion.mp3']);
+            this.load.audio('oof', ['sound/oof.mp3']);
         }
         function level_1(scene) {
             // set_map
@@ -216,8 +231,61 @@
             e13 = new Enemy(scene, 1576, 1442, 'enemy_1', enemy_1_Animations, "range");
         }
 
+        function level_3(scene) {
+
+            test1 = false;
+            // set_map
+            layer_1.setVisible(false);
+            layer_2.setVisible(false);
+            layer_3.setVisible(false);
+            layer_4.setVisible(false);
+
+            map = scene.make.tilemap({ key: 'tilemap_final' });
+            var tileset_1 = map.addTilesetImage('factorytileset', 'factorytiles');
+            var tileset_2 = map.addTilesetImage('scifitileset', 'scifitiles');
+
+            layer_1 = map.createStaticLayer('floor', tileset_1);
+            layer_2 = map.createStaticLayer('walls', tileset_2);
+            layer_4 = map.createStaticLayer('acid', tileset_2);
+
+            layer_2.setCollisionByExclusion([-1]);
+            layer_4.setCollisionByExclusion([-1]);
+
+            // shoot mark and player
+            mark = new Mark(scene, 0, 0, 'mark');
+            let playerAnimations = {};
+            var idle = scene.anims.create({ key: 'cube_idle', frames: scene.anims.generateFrameNames('cube', { prefix: 'Idle_', end: 6, zeroPad: 1 }), repeat: -1, frameRate: 6 });
+            playerAnimations['idle'] = idle;
+            var left = scene.anims.create({ key: 'cube_left', frames: scene.anims.generateFrameNames('cube', { prefix: 'Left_', end: 6, zeroPad: 1 }), repeat: -1, frameRate: 6 });
+            playerAnimations['left'] = left;
+            var right = scene.anims.create({ key: 'cube_right', frames: scene.anims.generateFrameNames('cube', { prefix: 'Right_', end: 6, zeroPad: 1 }), repeat: -1, frameRate: 6 });
+            playerAnimations['right'] = right;
+
+            mark = new Mark(scene, 0, 0, 'mark');
+            player.destroy();
+            player = new Player(scene, 352, 640, 'cube', playerAnimations);
+            scene.physics.add.collider(player, layer_2);
+            scene.physics.add.collider(player, layer_4);
+            player.play(player.animations['idle']);
+            weapon.destroy();
+            weapon = scene.add.image(player.x, player.y, 'machine_gun');
+        }
+
         function create() {
             this.cameras.main.setZoom(1.75);
+            music = this.sound.add("bgm", {loop: true});
+            music.play();
+
+            shoot_sound = this.sound.add("laser", {loop: false});
+            shoot_sound.setVolume(0.5);
+
+            shoot_shotgun = this.sound.add("shotgun", {loop: false});
+            shoot_shotgun.setVolume(0.5);
+
+            death_explosion = this.sound.add("deathsound", {loop: false});
+            death_explosion.setVolume(2);
+            hit_oof = this.sound.add("oof", {loop: false});
+            hit_oof.setVolume(1);
 
             level_1(this);
 
@@ -236,6 +304,7 @@
                     shooting_state = true;
                 else if (gun_type === "shotgun") {
                     if (shoot_cool_down) {
+                        shoot_shotgun.play();
                         angle = Phaser.Math.Angle.Between(player.x, player.y, mark.x, mark.y);
                         var bullet;
                         bullet = new Bullet(this, player.x, player.y, 'missile', angle);
@@ -297,17 +366,15 @@
                 if (keys.Q.isDown && switch_cool_down) {
                     switch_cool_down = false;
                     this.time.delayedCall(1000, s_cool_down, [], this);
-                    if (gun_type === "machine")
-                    {
+                    if (gun_type === "machine") {
                         gun_type = "shotgun";
                         weapon.destroy();
-                        weapon =  weapon = this.add.image(400, 300, 'shotgun');
+                        weapon = weapon = this.add.image(400, 300, 'shotgun');
                     }
-                    else
-                    {
+                    else {
                         gun_type = "machine";
                         weapon.destroy();
-                        weapon =  weapon = this.add.image(400, 300, 'machine_gun');
+                        weapon = weapon = this.add.image(400, 300, 'machine_gun');
                     }
                 }
 
@@ -324,7 +391,7 @@
                 weapon.x = player.x;
                 weapon.y = player.y;
                 var a = Phaser.Math.Angle.Between(player.x, player.y, mark.x, mark.y)
-                if(weapon.flipX)
+                if (weapon.flipX)
                     a = a + Math.PI;
                 weapon.rotation = a;
                 //Handle player status
@@ -338,6 +405,7 @@
                 }
                 if (current_level === 2) {
                     if (enemies.length === 0 && test1 === false) {
+                        level_3(this);
                         test1 = true;
                         Boss = new boss(this, 1726, 1167, 'boss', null);
                         navigate(this, player, Boss);
@@ -368,6 +436,7 @@
                             enemy.setVelocityX(enemy.speed * Math.cos(angle));
                             enemy.setVelocityY(enemy.speed * Math.sin(angle));
                             if (enemy.health < 0) {
+                                death_explosion.play();
                                 enemy.health_bar.width = 0;
                                 enemy.play(enemy.animations['death']);
                                 this.time.delayedCall(1000, destroy, [enemy], this);
@@ -379,8 +448,7 @@
                         else {
                             if (distance < enemy.min_distance && enemy.cool_down) {
                                 enemy.cool_down = false;
-                                if(enemy.type === "range")
-                                {
+                                if (enemy.type === "range") {
                                     this.time.delayedCall(500, enemy_cool_down, [enemy], this);
                                     angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, player.x, player.y);
                                     var bullet;
@@ -388,15 +456,16 @@
                                     this.physics.add.overlap(bullet, player, bullet_hit, null, this);
                                     this.physics.add.collider(bullet, layer_2, bullet_hit_wall, null, this);
                                 }
-                                else
-                                {
-                                    enemy.play(enemy.animations['attack']);
-                                    player,health -= 2;
+                                else {
+                                    // enemy.play(enemy.animations['attack']);
+                                    this.time.delayedCall(500, enemy_cool_down, [enemy], this);
+                                    player.damage(2);
                                 }
                             }
                             enemy.setVelocityX(0);
                             enemy.setVelocityY(0);
                             if (enemy.health < 0) {
+                                death_explosion.play();
                                 enemy.health_bar.width = 0;
                                 enemy.play(enemy.animations['death']);
                                 this.time.delayedCall(1000, destroy, [enemy], this);
@@ -405,22 +474,22 @@
                         }
                     }
                 }
-                if(bossalive){
-                var distance = Math.sqrt((Boss.x - Boss.x) ** 2 + (Boss.y - player.y) ** 2);
-                if (Boss.path.length > 0 && distance > 50 && distance < 700) {
-                    var current = [Math.round(Boss.x / 32), Math.round(Boss.y / 32)];
-                    var target = Boss.path[Boss.path.length - 1];
-                    if (current[1] === target[0] && current[0] === target[1]) {
-                        Boss.path.pop();
+                if (bossalive) {
+                    var distance = Math.sqrt((Boss.x - Boss.x) ** 2 + (Boss.y - player.y) ** 2);
+                    if (Boss.path.length > 0 && distance > 50 && distance < 700) {
+                        var current = [Math.round(Boss.x / 32), Math.round(Boss.y / 32)];
+                        var target = Boss.path[Boss.path.length - 1];
+                        if (current[1] === target[0] && current[0] === target[1]) {
+                            Boss.path.pop();
+                        }
+                        var angle = Phaser.Math.Angle.Between(Boss.x, Boss.y, target[1] * 32, target[0] * 32);
+                        Boss.setVelocityX(200 * Math.cos(angle));
+                        Boss.setVelocityY(200 * Math.sin(angle));
                     }
-                    var angle = Phaser.Math.Angle.Between(Boss.x, Boss.y, target[1] * 32, target[0] * 32);
-                    Boss.setVelocityX(200 * Math.cos(angle));
-                    Boss.setVelocityY(200 * Math.sin(angle));
-                  }
                 }
-                    if (bossalive) {
+                if (bossalive) {
                     //var bulls[];
-                      Boss.health_bar.width = Boss.health * 1;
+                    Boss.health_bar.width = Boss.health * 1;
                     if (bosscooldown) {
 
 
@@ -445,6 +514,7 @@
 
                 if (shooting_state) {
                     if (shoot_cool_down && gun_type == "machine") {
+                        shoot_sound.play();
                         angle = Phaser.Math.Angle.Between(player.x, player.y, mark.x, mark.y);
                         var bullet;
                         bullet = new Bullet(this, player.x, player.y, 'missile', angle);
@@ -501,6 +571,7 @@
                 super(scene, x, y, spritesheet);
                 this.health = 30;
                 this.animations = animations;
+                this.scene = scene;
                 scene.add.existing(this);
                 scene.physics.add.existing(this);
                 this.setScale(0.8);
@@ -510,14 +581,11 @@
 
             damage(damage) {
                 this.health -= damage;
+                turnRed(this, this.scene);
                 if (this.health <= 0) {
-                    //  var s = game.add.sprite(1920/2, 1920/2, 'lose');
                     lost = true;
                     this.disableBody(true, true);
                     gui.setText('You Lost!');
-
-                    //  s.setScale(5);
-                    //this.destroy();
                 }
             }
         }
@@ -546,16 +614,15 @@
             constructor(scene, x, y, spritesheet, animation, type) {
                 super(scene, x, y, spritesheet, animation);
                 this.type = type;
-                if(type === "melee")
-                {
-                    this.min_distance = 10;
+                if (type === "melee") {
+                    this.min_distance = 30;
                     this.speed = 300;
                 }
-                else
-                {
+                else {
                     this.min_distance = 100;
                     this.speed = 180;
                 }
+                this.scene = scene;
                 this.animations = animation;
                 this.path = [];
                 this.health = 1;
@@ -573,6 +640,7 @@
                 scene.tweens.add({ targets: this, x: xDist, y: yDist, duration: time, ease: 'Sine.easeInOut', repeat: -1, yoyo: true });
             }
             damage(damage) {
+                turnRed(this, this.scene);
                 this.health -= damage;
             }
         }
@@ -612,6 +680,16 @@
 
         function s_cool_down() {
             switch_cool_down = true;
+        }
+
+        function turnRed(entity, scene)
+        {
+            entity.tint = 0xff5353;
+            scene.time.delayedCall(100, turnWhite, [entity], scene);
+        }
+        function turnWhite(entity)
+        {
+            entity.tint = 0xffffff;
         }
 
         function navigate(scene, player, enemy) {
