@@ -1,0 +1,240 @@
+{
+  "frames": [
+    {
+      "filename": "explosion-animation9",
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 109,
+        "h": 84
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 2,
+        "y": 4,
+        "w": 109,
+        "h": 84
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "explosion-animation6",
+      "frame": {
+        "x": 109,
+        "y": 0,
+        "w": 108,
+        "h": 83
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 18,
+        "w": 108,
+        "h": 83
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "explosion-animation8",
+      "frame": {
+        "x": 217,
+        "y": 0,
+        "w": 107,
+        "h": 89
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 2,
+        "y": 6,
+        "w": 107,
+        "h": 89
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "explosion-animation5",
+      "frame": {
+        "x": 109,
+        "y": 83,
+        "w": 102,
+        "h": 75
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 4,
+        "y": 24,
+        "w": 102,
+        "h": 75
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "explosion-animation7",
+      "frame": {
+        "x": 0,
+        "y": 84,
+        "w": 98,
+        "h": 92
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 7,
+        "y": 9,
+        "w": 98,
+        "h": 92
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "explosion-animation4",
+      "frame": {
+        "x": 324,
+        "y": 0,
+        "w": 94,
+        "h": 72
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 6,
+        "y": 27,
+        "w": 94,
+        "h": 72
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "explosion-animation3",
+      "frame": {
+        "x": 418,
+        "y": 0,
+        "w": 79,
+        "h": 69
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 13,
+        "y": 26,
+        "w": 79,
+        "h": 69
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "explosion-animation2",
+      "frame": {
+        "x": 497,
+        "y": 0,
+        "w": 56,
+        "h": 51
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 25,
+        "y": 39,
+        "w": 56,
+        "h": 51
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    {
+      "filename": "explosion-animation1",
+      "frame": {
+        "x": 553,
+        "y": 0,
+        "w": 32,
+        "h": 32
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 40,
+        "y": 54,
+        "w": 32,
+        "h": 32
+      },
+      "sourceSize": {
+        "w": 112,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  ],
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "explosion.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 585,
+      "h": 176
+    },
+    "scale": 1
+  }
+}
