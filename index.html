@@ -144,39 +144,17 @@
             enemy_1_Animations['idle'] = idle;
             enemy_1_Animations['death'] = death;
 
-            room2right = new Enemy(scene, 480, 1408, 'enemy_1', enemy_1_Animations);
-            enemies.push(room2right);
-            room2right.play(room2right.animations['idle']);
-            navigate(scene, player, room2right);
+            room2right = new Enemy(scene, 480, 1408, 'enemy_1', enemy_1_Animations, "range");
+            room2left = new Enemy(scene, 192, 1408, 'enemy_1', enemy_1_Animations, "range");
 
-            room2left = new Enemy(scene, 192, 1408, 'enemy_1', enemy_1_Animations);
-            enemies.push(room2left);
-            room2left.play(room2left.animations['idle']);
-            navigate(scene, player, room2left);
+            room3right = new Enemy(scene, 787, 1607, 'enemy_1', enemy_1_Animations, "range");
+            room3left = new Enemy(scene, 1092, 1620, 'enemy_1', enemy_1_Animations, "range");
 
-            room3right = new Enemy(scene, 787, 1607, 'enemy_1', enemy_1_Animations);
-            enemies.push(room3right);
-            room3right.play(room3right.animations['idle']);
-            navigate(scene, player, room3right);
-
-            room3left = new Enemy(scene, 1092, 1620, 'enemy_1', enemy_1_Animations);
-            enemies.push(room3left);
-            room3left.play(room2left.animations['idle']);
-            navigate(scene, player, room3left);
-
-            room4right = new Enemy(scene, 1690, 1113, 'enemy_1', enemy_1_Animations);
-            enemies.push(room4right);
-            room4right.play(room4right.animations['idle']);
-            navigate(scene, player, room4right);
-
-            room4left = new Enemy(scene, 1671, 1408, 'enemy_1', enemy_1_Animations);
-            enemies.push(room4left);
-            room4left.play(room4left.animations['idle']);
-            navigate(scene, player, room4left);
+            room4right = new Enemy(scene, 1690, 1113, 'enemy_1', enemy_1_Animations, "range");
+            room4left = new Enemy(scene, 1671, 1408, 'enemy_1', enemy_1_Animations, "range");
         }
 
         function level_2(scene) {
-          //weapon.setFlip(true, false);
 
             test1 = false;
             // set_map
@@ -214,6 +192,7 @@
             scene.physics.add.collider(player, layer_2);
             scene.physics.add.collider(player, layer_4);
             player.play(player.animations['idle']);
+            weapon.destroy();
             weapon = scene.add.image(player.x, player.y, 'machine_gun');
             // enemy
             let enemy_1_Animations = {};
@@ -222,35 +201,19 @@
             enemy_1_Animations['idle'] = idle;
             enemy_1_Animations['death'] = death;
 
-            room2right = new Enemy(scene, 480, 1408, 'enemy_1', enemy_1_Animations);
-            enemies.push(room2right);
-            room2right.play(room2right.animations['idle']);
-            navigate(scene, player, room2right);
-
-            room2left = new Enemy(scene, 192, 1408, 'enemy_1', enemy_1_Animations);
-            enemies.push(room2left);
-            room2left.play(room2left.animations['idle']);
-            navigate(scene, player, room2left);
-
-            room3right = new Enemy(scene, 787, 1607, 'enemy_1', enemy_1_Animations);
-            enemies.push(room3right);
-            room3right.play(room3right.animations['idle']);
-            navigate(scene, player, room3right);
-
-            room3left = new Enemy(scene, 1092, 1620, 'enemy_1', enemy_1_Animations);
-            enemies.push(room3left);
-            room3left.play(room2left.animations['idle']);
-            navigate(scene, player, room3left);
-
-            room4right = new Enemy(scene, 1690, 1113, 'enemy_1', enemy_1_Animations);
-            enemies.push(room4right);
-            room4right.play(room4right.animations['idle']);
-            navigate(scene, player, room4right);
-
-            room4left = new Enemy(scene, 1671, 1408, 'enemy_1', enemy_1_Animations);
-            enemies.push(room4left);
-            room4left.play(room4left.animations['idle']);
-            navigate(scene, player, room4left);
+            e1 = new Enemy(scene, 705, 1176, 'enemy_1', enemy_1_Animations, "range");
+            e2 = new Enemy(scene, 1187, 1184, 'enemy_1', enemy_1_Animations, "melee");
+            e3 = new Enemy(scene, 1168, 860, 'enemy_1', enemy_1_Animations, "range");
+            e4 = new Enemy(scene, 151, 639, 'enemy_1', enemy_1_Animations, "melee");
+            e5 = new Enemy(scene, 124, 1123, 'enemy_1', enemy_1_Animations, "range");
+            e6 = new Enemy(scene, 430, 1153, 'enemy_1', enemy_1_Animations, "range");
+            e7 = new Enemy(scene, 144, 1455, 'enemy_1', enemy_1_Animations, "melee");
+            e8 = new Enemy(scene, 82, 1809, 'enemy_1', enemy_1_Animations, "range");
+            e9 = new Enemy(scene, 498, 1817, 'enemy_1', enemy_1_Animations, "melee");
+            e10 = new Enemy(scene, 785, 1787, 'enemy_1', enemy_1_Animations, "range");
+            e11 = new Enemy(scene, 1337, 1787, 'enemy_1', enemy_1_Animations, "range");
+            e12 = new Enemy(scene, 788, 1427, 'enemy_1', enemy_1_Animations, "range");
+            e13 = new Enemy(scene, 1576, 1442, 'enemy_1', enemy_1_Animations, "range");
         }
 
         function create() {
@@ -395,15 +358,15 @@
                         enemy.health_bar.y = y - 25;
                         enemy.health_bar.width = enemy.health * 1;
                         var distance = Math.sqrt((enemy.x - player.x) ** 2 + (enemy.y - player.y) ** 2);
-                        if (enemy.path.length > 0 && distance > 100 && distance < 700) {
+                        if (enemy.path.length > 0 && distance > enemy.min_distance && distance < 700) {
                             var current = [Math.round(enemy.x / 32), Math.round(enemy.y / 32)];
                             var target = enemy.path[enemy.path.length - 1];
                             if (current[1] === target[0] && current[0] === target[1]) {
                                 enemy.path.pop();
                             }
                             var angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, target[1] * 32, target[0] * 32);
-                            enemy.setVelocityX(200 * Math.cos(angle));
-                            enemy.setVelocityY(200 * Math.sin(angle));
+                            enemy.setVelocityX(enemy.speed * Math.cos(angle));
+                            enemy.setVelocityY(enemy.speed * Math.sin(angle));
                             if (enemy.health < 0) {
                                 enemy.health_bar.width = 0;
                                 enemy.play(enemy.animations['death']);
@@ -414,14 +377,22 @@
                             }
                         }
                         else {
-                            if (distance < 100 && enemy.cool_down) {
+                            if (distance < enemy.min_distance && enemy.cool_down) {
                                 enemy.cool_down = false;
-                                this.time.delayedCall(500, enemy_cool_down, [enemy], this);
-                                angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, player.x, player.y);
-                                var bullet;
-                                bullet = new Bullet(this, enemy.x, enemy.y, 'enemymissile', angle);
-                                this.physics.add.overlap(bullet, player, bullet_hit, null, this);
-                                this.physics.add.collider(bullet, layer_2, bullet_hit_wall, null, this);
+                                if(enemy.type === "range")
+                                {
+                                    this.time.delayedCall(500, enemy_cool_down, [enemy], this);
+                                    angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, player.x, player.y);
+                                    var bullet;
+                                    bullet = new Bullet(this, enemy.x, enemy.y, 'enemymissile', angle);
+                                    this.physics.add.overlap(bullet, player, bullet_hit, null, this);
+                                    this.physics.add.collider(bullet, layer_2, bullet_hit_wall, null, this);
+                                }
+                                else
+                                {
+                                    enemy.play(enemy.animations['attack']);
+                                    player,health -= 2;
+                                }
                             }
                             enemy.setVelocityX(0);
                             enemy.setVelocityY(0);
@@ -572,8 +543,19 @@
         }
 
         class Enemy extends Phaser.Physics.Arcade.Sprite {
-            constructor(scene, x, y, spritesheet, animation) {
+            constructor(scene, x, y, spritesheet, animation, type) {
                 super(scene, x, y, spritesheet, animation);
+                this.type = type;
+                if(type === "melee")
+                {
+                    this.min_distance = 10;
+                    this.speed = 300;
+                }
+                else
+                {
+                    this.min_distance = 100;
+                    this.speed = 180;
+                }
                 this.animations = animation;
                 this.path = [];
                 this.health = 1;
@@ -582,6 +564,10 @@
                 scene.physics.add.existing(this);
                 this.setScale(0.6);
                 this.health_bar = scene.add.rectangle(x - 5, y - 25, this.health * 1, 1, 0x9966ff);
+
+                enemies.push(this);
+                this.play(this.animations['idle']);
+                navigate(scene, player, this);
             }
             addTween(scene, xDist, yDist, time) {
                 scene.tweens.add({ targets: this, x: xDist, y: yDist, duration: time, ease: 'Sine.easeInOut', repeat: -1, yoyo: true });
