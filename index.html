@@ -82,7 +82,7 @@
             this.load.image('factorytiles', 'factorytileset.png');
             this.load.image('scifitiles', 'scifitileset.png');
             this.load.image('health', 'assets/health.png');
-            this.load.tilemapTiledJSON('tilemap', 'assets/maponev3.json');
+            this.load.tilemapTiledJSON('tilemap', 'assets/maponev6.json');
 
             this.load.image('dungeontiles', 'map3/dungeontileset.png');
             this.load.image('greydungeontiles', 'map3/greydungeontileset.png');
@@ -92,12 +92,10 @@
             this.load.image('scifitiles', 'scifitileset.png');
 
         }
-
-        function create() {
-            this.cameras.main.setZoom(1.75);
-
+        function level_1(scene)
+        {
             // set_map
-            map = this.make.tilemap({ key: 'tilemap' });
+            map = scene.make.tilemap({ key: 'tilemap' });
             var tileset_1 = map.addTilesetImage('factorytileset', 'factorytiles');
             var tileset_2 = map.addTilesetImage('scifitileset', 'scifitiles');
 
@@ -110,58 +108,61 @@
             layer_4.setCollisionByExclusion([-1]);
 
             // shoot mark and player
-            mark = new Mark(this, 0, 0, 'mark');
+            mark = new Mark(scene, 0, 0, 'mark');
 
             let playerAnimations = {};
-            var idle = this.anims.create({ key: 'cube_idle', frames: this.anims.generateFrameNames('cube', { prefix: 'Idle_', end: 6, zeroPad: 1 }), repeat: -1, frameRate: 6 });
+            var idle = scene.anims.create({ key: 'cube_idle', frames: scene.anims.generateFrameNames('cube', { prefix: 'Idle_', end: 6, zeroPad: 1 }), repeat: -1, frameRate: 6 });
             playerAnimations['idle'] = idle;
-            var left = this.anims.create({ key: 'cube_left', frames: this.anims.generateFrameNames('cube', { prefix: 'Left_', end: 6, zeroPad: 1 }), repeat: -1, frameRate: 6 });
+            var left = scene.anims.create({ key: 'cube_left', frames: scene.anims.generateFrameNames('cube', { prefix: 'Left_', end: 6, zeroPad: 1 }), repeat: -1, frameRate: 6 });
             playerAnimations['left'] = left;
-            var right = this.anims.create({ key: 'cube_right', frames: this.anims.generateFrameNames('cube', { prefix: 'Right_', end: 6, zeroPad: 1 }), repeat: -1, frameRate: 6 });
+            var right = scene.anims.create({ key: 'cube_right', frames: scene.anims.generateFrameNames('cube', { prefix: 'Right_', end: 6, zeroPad: 1 }), repeat: -1, frameRate: 6 });
             playerAnimations['right'] = right;
 
-            mark = new Mark(this, 0, 0, 'mark');
-            player = new Player(this, 352, 640, 'cube', playerAnimations);
-            this.physics.add.collider(player, layer_2);
-            this.physics.add.collider(player, layer_4);
+            mark = new Mark(scene, 0, 0, 'mark');
+            player = new Player(scene, 352, 640, 'cube', playerAnimations);
+            scene.physics.add.collider(player, layer_2);
+            scene.physics.add.collider(player, layer_4);
             player.play(player.animations['idle']);
 
             // enemy
             let enemy_1_Animations = {};
-            var idle = this.anims.create({ key: 'enemy_1_idle', frames: this.anims.generateFrameNames('enemy_1', { prefix: 'mech-unit-export', end: 7, zeroPad: 1 }), repeat: -1, frameRate: 6 });
+            var idle = scene.anims.create({ key: 'enemy_1_idle', frames: scene.anims.generateFrameNames('enemy_1', { prefix: 'mech-unit-export', end: 7, zeroPad: 1 }), repeat: -1, frameRate: 6 });
             enemy_1_Animations['idle'] = idle;
 
-            room2right = new Enemy(this, 480, 1408, 'enemy_1', enemy_1_Animations);
+            room2right = new Enemy(scene, 480, 1408, 'enemy_1', enemy_1_Animations);
             enemies.push(room2right);
             room2right.play(room2right.animations['idle']);
-            navigate(this, player, room2right);
+            navigate(scene, player, room2right);
 
-            room2left = new Enemy(this, 192, 1408, 'enemy_1', enemy_1_Animations);
+            room2left = new Enemy(scene, 192, 1408, 'enemy_1', enemy_1_Animations);
             enemies.push(room2left);
             room2left.play(room2left.animations['idle']);
-            navigate(this, player, room2left);
+            navigate(scene, player, room2left);
 
-            room3right = new Enemy(this, 787, 1607, 'enemy_1', enemy_1_Animations);
+            room3right = new Enemy(scene, 787, 1607, 'enemy_1', enemy_1_Animations);
             enemies.push(room3right);
             room3right.play(room3right.animations['idle']);
-            navigate(this, player, room3right);
+            navigate(scene, player, room3right);
 
-            room3left = new Enemy(this, 1092, 1620, 'enemy_1', enemy_1_Animations);
+            room3left = new Enemy(scene, 1092, 1620, 'enemy_1', enemy_1_Animations);
             enemies.push(room3left);
             room3left.play(room2left.animations['idle']);
-            navigate(this, player, room3left);
+            navigate(scene, player, room3left);
 
-            room4right = new Enemy(this, 1690, 1113, 'enemy_1', enemy_1_Animations);
+            room4right = new Enemy(scene, 1690, 1113, 'enemy_1', enemy_1_Animations);
             enemies.push(room4right);
             room4right.play(room4right.animations['idle']);
-            navigate(this, player, room4right);
+            navigate(scene, player, room4right);
 
-            room4left = new Enemy(this, 1671, 1408, 'enemy_1', enemy_1_Animations);
+            room4left = new Enemy(scene, 1671, 1408, 'enemy_1', enemy_1_Animations);
             enemies.push(room4left);
             room4left.play(room4left.animations['idle']);
-            navigate(this, player, room4left);
+            navigate(scene, player, room4left);
+        }
+        function create() {
+            this.cameras.main.setZoom(1.75);
 
-
+            level_1(this);
             //Set up user input
             cursors = this.input.keyboard.createCursorKeys();
             keys = this.input.keyboard.addKeys('A, D, W, S, Q');
@@ -289,6 +290,7 @@
                         enemy.setVelocityX(0);
                         enemy.setVelocityY(0);
                         if (enemy.health < 0) {
+                            enemy.health_bar.width = 0;
                             enemy.destroy();
                             enemies.splice(enemies.indexOf(enemy), 1);
                         }
