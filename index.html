@@ -251,7 +251,7 @@
             layer_4.setVisible(false);
 
             map = scene.make.tilemap({ key: 'tilemap_final' });
-            var tileset_1 = map.addTilesetImage('ft', 'factorytiles');
+            var tileset_1 = map.addTilesetImage('factorytileset', 'factorytiles');
             var tileset_2 = map.addTilesetImage('scifitileset', 'scifitiles');
 
             layer_1 = map.createStaticLayer('floor', tileset_1);
@@ -635,16 +635,17 @@
                 this.type = type;
                 if (type === "melee") {
                     this.min_distance = 30;
-                    this.speed = 300;
+                    this.speed = 400;
+                    this.health = 25;
                 }
                 else {
                     this.min_distance = 100;
-                    this.speed = 180;
+                    this.speed = 250;
+                    this.health = 15;
                 }
                 this.scene = scene;
                 this.animations = animation;
                 this.path = [];
-                this.health = 15;
                 this.cool_down = true;
                 scene.add.existing(this);
                 scene.physics.add.existing(this);
