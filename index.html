@@ -245,6 +245,7 @@
             this.cameras.main.setZoom(1.75);
 
             level_1(this);
+            
             //Set up user input
             cursors = this.input.keyboard.createCursorKeys();
             keys = this.input.keyboard.addKeys('A, D, W, S, Q');
@@ -283,23 +284,12 @@
             this.input.on('pointerup', function (pointer) {
                 shooting_state = false;
             }, this);
-
             graphics = this.add.graphics();
-
 
         }
 
         function update() {
             if (!lost) {
-                player.setDragX(1500);
-
-                var x = player.x
-                var y = player.y
-                player.health_bar.x = x - 1;
-                player.health_bar.y = y - 25;
-                player.health_bar.width = player.health * 1;
-                gui = this.add.text(x, y, '', { fontSize: '48px', fill: '#FF0000 ' });
-                //Handle player movements
                 var i = 0;
                 if (cursors.left.isDown || keys.A.isDown) {
                     i = 1
@@ -337,6 +327,15 @@
                 }
 
                 this.cameras.main.centerOn(player.x, player.y);
+                // basic control
+
+                var x = player.x
+                var y = player.y
+                player.health_bar.x = x - 1;
+                player.health_bar.y = y - 25;
+                player.health_bar.width = player.health * 1;
+                gui = this.add.text(x, y, '', { fontSize: '48px', fill: '#FF0000 ' });
+                //Handle player status
 
                 if (enemies.length === 0) {
                     if (current_level === 1) {
@@ -355,6 +354,8 @@
                         bossalive = true;
                     }
                 }
+                // change level
+
                 for (var i = 0; i < enemies.length; i++) {
                     var enemy = enemies[i];
                     if (enemy) {
@@ -403,6 +404,31 @@
                         }
                     }
                 }
+
+                if (bossalive) {
+                    //var bulls[];
+                    if (bosscooldown) {
+
+
+                        Boss.health_bar.width = Boss.health * 1;
+                        bosscooldown = false;
+                        this.time.delayedCall(5000, cooldown2, [], this);
+                        var num = 25;
+                        for (let i = 0; i < num; i++) {
+                            console.log("HIIIII");
+                            b = new BossBullet(this, Boss.x, Boss.y, 'enemymissile', 360 / num * i);
+                            this.physics.add.overlap(b, player, bullet_hit3, null, this);
+                            this.physics.add.collider(b, layer_2, bullet_hit_wall, null, this);
+
+                        }
+                    }
+
+                }
+                if (!bossalive && test1 == true) {
+                    gui.setText('You Win!');
+                }
+                // enemy AI
+
                 if (shooting_state) {
                     if (shoot_cool_down && gun_type == "machine") {
                         angle = Phaser.Math.Angle.Between(player.x, player.y, mark.x, mark.y);
@@ -416,54 +442,7 @@
                         this.physics.add.overlap(bullet, Boss, bullet_hit2, null, this);
                     }
                 }
-                if (bossalive) {
-                    //var bulls[];
-
-                    if (bosscooldown) {
-
-
-                        Boss.health_bar.width = Boss.health * 1;
-                        bosscooldown = false;
-                        this.time.delayedCall(5000, cooldown2, [], this);
-                        var num = 25;
-                        for (let i = 0; i < num; i++) {
-                            console.log("HIIIII");
-                            b = new BossBullet(this, Boss.x, Boss.y, 'missile', 360 / num * i);
-                            this.physics.add.overlap(b, player, bullet_hit3, null, this);
-                            this.physics.add.collider(b, layer_2, bullet_hit_wall, null, this);
-
-                        }
-                    }
-
-                }
-                if (!bossalive && test1 == true) {
-                    gui.setText('You Win!');
-                }
-            }
-        }
-        function cooldown2() {
-            bosscooldown = true;
-        }
-        function destroy(enemy) {
-            enemy.destroy();
-        }
-
-        function enemy_cool_down(enemy) {
-            enemy.cool_down = true;
-        }
-
-        function cool_down() {
-            shoot_cool_down = true;
-        }
-
-        function s_cool_down() {
-            switch_cool_down = true;
-        }
-
-        function jump(event) {
-            if (jump_number > 0) {
-                jump_number = jump_number - 1;
-                player.setVelocityY(-700);
+                // shoot
             }
         }
         class BossBullet extends Phaser.Physics.Arcade.Sprite {
@@ -499,24 +478,6 @@
                 scene.add.existing(this);
                 this.setScale(0.7);
             }
-        }
-
-        function bullet_hit(obj1, obj2) {
-            obj1.destroy();
-            obj2.damage(1);
-        }
-        function bullet_hit2(obj1, obj2) {
-            obj1.destroy();
-            obj2.damage(1);
-
-        }
-        function bullet_hit3(obj1, obj2) {
-            obj1.destroy();
-            obj2.damage(10);
-
-        }
-        function bullet_hit_wall(obj1, obj2) {
-            obj1.destroy();
         }
 
         class Player extends Phaser.Physics.Arcade.Sprite {
@@ -564,6 +525,7 @@
                 }
             }
         }
+
         class Enemy extends Phaser.Physics.Arcade.Sprite {
             constructor(scene, x, y, spritesheet, animation) {
                 super(scene, x, y, spritesheet, animation);
@@ -582,6 +544,43 @@
             damage(damage) {
                 this.health -= damage;
             }
+        }
+
+        function bullet_hit(obj1, obj2) {
+            obj1.destroy();
+            obj2.damage(1);
+        }
+        function bullet_hit2(obj1, obj2) {
+            obj1.destroy();
+            obj2.damage(1);
+
+        }
+        function bullet_hit3(obj1, obj2) {
+            obj1.destroy();
+            obj2.damage(10);
+
+        }
+        function bullet_hit_wall(obj1, obj2) {
+            obj1.destroy();
+        }
+
+        function cooldown2() {
+            bosscooldown = true;
+        }
+        function destroy(enemy) {
+            enemy.destroy();
+        }
+
+        function enemy_cool_down(enemy) {
+            enemy.cool_down = true;
+        }
+
+        function cool_down() {
+            shoot_cool_down = true;
+        }
+
+        function s_cool_down() {
+            switch_cool_down = true;
         }
 
         function navigate(scene, player, enemy) {
