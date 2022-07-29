@@ -348,6 +348,7 @@
                     if (enemies.length === 0 && test1 === false) {
                         test1 = true;
                         Boss = new boss(this, 1726, 1167, 'boss', null);
+                        navigate(this, player, Boss);
                         gui = this.add.text(x, y, '', { fontSize: '48px', fill: '#FFFFFF  ' });
                         gui.setText('Find the boss');
                         bosscooldown = true;
@@ -404,8 +405,20 @@
                         }
                     }
                 }
-
-                if (bossalive) {
+                if(bossalive){
+                var distance = Math.sqrt((Boss.x - Boss.x) ** 2 + (Boss.y - player.y) ** 2);
+                if (Boss.path.length > 0 && distance > 50 && distance < 700) {
+                    var current = [Math.round(Boss.x / 32), Math.round(Boss.y / 32)];
+                    var target = Boss.path[Boss.path.length - 1];
+                    if (current[1] === target[0] && current[0] === target[1]) {
+                        Boss.path.pop();
+                    }
+                    var angle = Phaser.Math.Angle.Between(Boss.x, Boss.y, target[1] * 32, target[0] * 32);
+                    Boss.setVelocityX(200 * Math.cos(angle));
+                    Boss.setVelocityY(200 * Math.sin(angle));
+                  }
+                }
+                    if (bossalive) {
                     //var bulls[];
                       Boss.health_bar.width = Boss.health * 1;
                     if (bosscooldown) {
@@ -446,6 +459,7 @@
                 // shoot
             }
         }
+
         class BossBullet extends Phaser.Physics.Arcade.Sprite {
             constructor(scene, x, y, spritesheet, angle) {
                 super(scene, x, y, spritesheet);
@@ -511,6 +525,7 @@
             constructor(scene, x, y, spritesheet, animation) {
                 super(scene, x, y, spritesheet, animation);
                 this.animations = animation;
+                this.path = [];
                 this.health = 50;
                 this.cool_down = true;
                 scene.add.existing(this);
