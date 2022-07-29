@@ -32,44 +32,54 @@
         };
 
         var game = new Phaser.Game(config);
-        var bosscooldown;
-        //Game Objects
+
+        //Game
         var lost;
-        var map;
-        var player;
-        var mark;
-        var bossalive;
+        var test1;
+
         //Keyboard controls
         var cursors;
         var keys;
         var space;
+
+        // enemy
         var enemies = [];
-        var room2left;
-        var room2right;
-        var jump_number;
+        var bossalive;
+        var Boss;
+        var bosscooldown;
+
+        //graphisc
         var graphics;
 
+        //palyer
+        var player;
+        var mark;
+
+        // weapon
         var gun_type = "machine";
+        var weapon;
         var shoot_cool_down = true;
         var shooting_state = false;
         var switch_cool_down = true;
         var gui;
 
+        // level
+        var current_level = 1;
+
+        // map
         var map;
-        var tileset;
-        var layer;
         var layer_1;
         var layer_2;
         var layer_3;
         var layer_4;
         var Boss;
-        var current_level = 1;
+
         var map3;
         var layer_3_1;
         var layer_3_2;
         var layer_3_3;
         var layer_3_4;
-        var test1;
+
         function GameScene() {
             Phaser.Scene.call(this, { key: 'GameScene' });
         }
@@ -246,10 +256,10 @@
 
             level_1(this);
 
+            weapon = this.add.image(400, 300, 'machine_gun');
             //Set up user input
             cursors = this.input.keyboard.createCursorKeys();
             keys = this.input.keyboard.addKeys('A, D, W, S, Q');
-
 
             this.input.on('pointermove', function (pointer) {
                 mark.x = pointer.worldX;
@@ -295,11 +305,13 @@
                     i = 1
                     player.setVelocityX(-200);
                     player.play(player.animations['left'], true);
+                    weapon.setFlip(true, false);
                 }
                 else if (cursors.right.isDown || keys.D.isDown) {
                     i = 1
                     player.setVelocityX(200);
                     player.play(player.animations['right'], true);
+                    weapon.setFlip(false, false);
                 }
 
                 if (keys.W.isDown) {
@@ -321,9 +333,17 @@
                     switch_cool_down = false;
                     this.time.delayedCall(1000, s_cool_down, [], this);
                     if (gun_type === "machine")
+                    {
                         gun_type = "shotgun";
+                        weapon.destroy();
+                        weapon =  weapon = this.add.image(400, 300, 'shotgun');
+                    }
                     else
+                    {
                         gun_type = "machine";
+                        weapon.destroy();
+                        weapon =  weapon = this.add.image(400, 300, 'machine_gun');
+                    }
                 }
 
                 this.cameras.main.centerOn(player.x, player.y);
@@ -335,6 +355,13 @@
                 player.health_bar.y = y - 25;
                 player.health_bar.width = player.health * 1;
                 gui = this.add.text(x, y, '', { fontSize: '48px', fill: '#FF0000 ' });
+
+                weapon.x = player.x;
+                weapon.y = player.y;
+                var a = Phaser.Math.Angle.Between(player.x, player.y, mark.x, mark.y)
+                if(weapon.flipX)
+                    a = a + Math.PI;
+                weapon.rotation = a;
                 //Handle player status
 
                 if (enemies.length === 0) {
