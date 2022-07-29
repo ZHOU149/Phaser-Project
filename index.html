@@ -176,6 +176,8 @@
         }
 
         function level_2(scene) {
+          //weapon.setFlip(true, false);
+
             test1 = false;
             // set_map
             layer_1.setVisible(false);
@@ -212,7 +214,7 @@
             scene.physics.add.collider(player, layer_2);
             scene.physics.add.collider(player, layer_4);
             player.play(player.animations['idle']);
-
+            weapon = scene.add.image(player.x, player.y, 'machine_gun');
             // enemy
             let enemy_1_Animations = {};
             var idle = scene.anims.create({ key: 'enemy_1_idle', frames: scene.anims.generateFrameNames('enemy_1', { prefix: 'mech-unit-export', end: 7, zeroPad: 1 }), repeat: -1, frameRate: 6 });
