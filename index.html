@@ -32,44 +32,52 @@
         };
 
         var game = new Phaser.Game(config);
-        var bosscooldown;
-        //Game Objects
+       
+        //Game
         var lost;
-        var map;
-        var player;
-        var mark;
-        var bossalive;
+        
         //Keyboard controls
         var cursors;
         var keys;
         var space;
+
+        // enemy
         var enemies = [];
-        var room2left;
-        var room2right;
-        var jump_number;
+        var bossalive;
+        var Boss;
+        var bosscooldown;
+       
+        //graphisc
         var graphics;
 
+        //palyer
+        var player;
+        var mark;
+
+        // weapon
         var gun_type = "machine";
+        var weapon;
         var shoot_cool_down = true;
         var shooting_state = false;
         var switch_cool_down = true;
         var gui;
+        
+        // level
+        var current_level = 1;
 
+        // map
         var map;
-        var tileset;
-        var layer;
         var layer_1;
         var layer_2;
         var layer_3;
         var layer_4;
         var Boss;
-        var current_level = 1;
+        
         var map3;
         var layer_3_1;
         var layer_3_2;
         var layer_3_3;
         var layer_3_4;
-        var test1;
         function GameScene() {
             Phaser.Scene.call(this, { key: 'GameScene' });
         }
@@ -245,11 +253,11 @@
             this.cameras.main.setZoom(1.75);
 
             level_1(this);
-            
+
+            weapon = this.add.image(400, 300, 'pic');
             //Set up user input
             cursors = this.input.keyboard.createCursorKeys();
             keys = this.input.keyboard.addKeys('A, D, W, S, Q');
-
 
             this.input.on('pointermove', function (pointer) {
                 mark.x = pointer.worldX;
