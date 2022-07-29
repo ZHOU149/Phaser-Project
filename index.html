@@ -32,12 +32,13 @@
         };
 
         var game = new Phaser.Game(config);
-
+        var bosscooldown;
         //Game Objects
+        var lost;
         var map;
         var player;
         var mark;
-
+        var bossalive;
         //Keyboard controls
         var cursors;
         var keys;
@@ -52,6 +53,7 @@
         var shoot_cool_down = true;
         var shooting_state = false;
         var switch_cool_down = true;
+        var gui;
 
         var map;
         var tileset;
@@ -60,14 +62,14 @@
         var layer_2;
         var layer_3;
         var layer_4;
-
+        var Boss;
         var current_level = 1;
         var map3;
         var layer_3_1;
         var layer_3_2;
         var layer_3_3;
         var layer_3_4;
-
+        var test1;
         function GameScene() {
             Phaser.Scene.call(this, { key: 'GameScene' });
         }
@@ -84,7 +86,7 @@
             this.load.image('scifitiles', 'scifitileset.png');
             this.load.image('health', 'assets/health.png');
             this.load.tilemapTiledJSON('tilemap', 'assets/maponev6.json');
-
+            this.load.image('lose','youdied.png');
             this.load.image('dungeontiles', 'map3/dungeontileset.png');
             this.load.image('greydungeontileset', 'map3/greydungeontileset.png');
             this.load.tilemapTiledJSON('tilemap3', 'map3/map3v2.json');
@@ -92,9 +94,13 @@
             this.load.image('factorytiles', 'factorytileset.png');
             this.load.image('scifitiles', 'scifitileset.png');
 
+            this.load.atlas('boss', 'flyingenemy.png','flyingenemy.json');
+
+
         }
         function level_1(scene) {
             // set_map
+            lost = false;
             map = scene.make.tilemap({ key: 'tilemap' });
             var tileset_1 = map.addTilesetImage('factorytileset', 'factorytiles');
             var tileset_2 = map.addTilesetImage('scifitileset', 'scifitiles');
@@ -163,7 +169,7 @@
         }
 
         function level_2(scene) {
-
+            test1=false;
             // set_map
             layer_1.setVisible(false);
             layer_2.setVisible(false);
@@ -262,15 +268,15 @@
                         bullet = new Bullet(this, player.x, player.y, 'missile', angle);
                         this.physics.add.overlap(bullet, enemies, bullet_hit, null, this);
                         this.physics.add.collider(bullet, layer_2, bullet_hit_wall, null, this);
-
+                          this.physics.add.overlap(bullet, Boss, bullet_hit2, null, this);
                         bullet = new Bullet(this, player.x, player.y, 'missile', angle + 15 / 180 * Math.PI);
                         this.physics.add.overlap(bullet, enemies, bullet_hit, null, this);
                         this.physics.add.collider(bullet, layer_2, bullet_hit_wall, null, this);
-
+      this.physics.add.overlap(bullet, Boss, bullet_hit2, null, this);
                         bullet = new Bullet(this, player.x, player.y, 'missile', angle - 15 / 180 * Math.PI);
                         this.physics.add.overlap(bullet, enemies, bullet_hit, null, this);
                         this.physics.add.collider(bullet, layer_2, bullet_hit_wall, null, this);
-
+      this.physics.add.overlap(bullet, Boss, bullet_hit2, null, this);
                         shoot_cool_down = false;
                         this.time.delayedCall(200, cool_down, [], this);
                     }
@@ -282,9 +288,12 @@
             }, this);
 
             graphics = this.add.graphics();
+
+
         }
 
         function update() {
+            if(!lost){
             player.setDragX(1500);
 
             var x = player.x
@@ -292,7 +301,7 @@
             player.health_bar.x = x - 1;
             player.health_bar.y = y - 25;
             player.health_bar.width = player.health * 1;
-
+            gui = this.add.text(x, y, '', {fontSize: '48px', fill: '#FF0000 '});
             //Handle player movements
             var i = 0;
             if (cursors.left.isDown || keys.A.isDown) {
@@ -337,6 +346,16 @@
                     current_level = 2;
                     level_2(this);
                 }
+            }
+            if(current_level===2){
+              if(enemies.length===0&&test1===false){
+                test1=true;
+                Boss = new boss(this, 1726, 1167, 'boss', null);
+                gui = this.add.text(x, y, '', {fontSize: '48px', fill: '#FFFFFF  '});
+                  gui.setText('Find the boss');
+                bosscooldown=true;
+                bossalive=true;
+              }
             }
             for (var i = 0; i < enemies.length; i++) {
                 var enemy = enemies[i];
@@ -390,14 +409,42 @@
                     angle = Phaser.Math.Angle.Between(player.x, player.y, mark.x, mark.y);
                     var bullet;
                     bullet = new Bullet(this, player.x, player.y, 'missile', angle);
+                    console.log("mark: "+ mark.x+" "+mark.y);
                     shoot_cool_down = false;
                     this.time.delayedCall(100, cool_down, [], this);
                     this.physics.add.overlap(bullet, enemies, bullet_hit, null, this);
                     this.physics.add.collider(bullet, layer_2, bullet_hit_wall, null, this);
+                            this.physics.add.overlap(bullet, Boss, bullet_hit2, null, this);
                 }
             }
-        }
+            if(bossalive){
+              //var bulls[];
 
+              if(bosscooldown){
+
+
+                Boss.health_bar.width = Boss.health * 1;
+                bosscooldown = false;
+                  this.time.delayedCall(5000, cooldown2, [], this);
+                  var num = 25;
+                for(let i=0;i<num;i++){
+                  console.log("HIIIII");
+                  b = new BossBullet(this, Boss.x, Boss.y,'missile', 360/num*i);
+                  this.physics.add.overlap(b, player, bullet_hit3, null, this);
+                  this.physics.add.collider(b, layer_2, bullet_hit_wall, null, this);
+
+                }
+              }
+
+            }
+            if(!bossalive&&test1==true){
+                gui.setText('You Win!');
+            }
+}
+        }
+        function cooldown2(){
+          bosscooldown=true;
+        }
         function destroy(enemy) {
             enemy.destroy();
         }
@@ -420,7 +467,21 @@
                 player.setVelocityY(-700);
             }
         }
-
+        class BossBullet extends Phaser.Physics.Arcade.Sprite {
+            constructor(scene, x, y, spritesheet, angle) {
+                super(scene, x, y, spritesheet);
+                scene.add.existing(this);
+                scene.physics.add.existing(this);
+    this.setAngle(angle * (180 / Math.PI));
+                //this.setAngle(angle);
+                this.setScale(0.1);
+                this.setVelocityX(400 * Math.cos(angle));
+                this.setVelocityY(400 * Math.sin(angle));
+            }
+            addTween(scene, xDist, yDist, time) {
+                scene.tweens.add({ targets: this, x: xDist, y: yDist, duration: time, ease: 'Sine.easeInOut', repeat: -1, yoyo: false });
+            }
+        }
         class Bullet extends Phaser.Physics.Arcade.Sprite {
             constructor(scene, x, y, spritesheet, angle) {
                 super(scene, x, y, spritesheet);
@@ -445,7 +506,16 @@
             obj1.destroy();
             obj2.damage(1);
         }
+        function bullet_hit2(obj1, obj2){
+          obj1.destroy();
+          obj2.damage(1);
 
+        }
+        function bullet_hit3(obj1, obj2){
+          obj1.destroy();
+          obj2.damage(10);
+
+        }
         function bullet_hit_wall(obj1, obj2) {
             obj1.destroy();
         }
@@ -465,12 +535,36 @@
 
             damage(damage) {
                 this.health -= damage;
-                if (this.health < 0) {
-                    this.destroy();
+                if (this.health <= 0) {
+                //  var s = game.add.sprite(1920/2, 1920/2, 'lose');
+                  lost = true;
+                    this.disableBody(true, true);
+                      gui.setText('You Lost!');
+
+                  //  s.setScale(5);
+                    //this.destroy();
                 }
             }
         }
-
+        class boss extends Phaser.Physics.Arcade.Sprite {
+            constructor(scene, x, y, spritesheet, animation) {
+                super(scene, x, y, spritesheet, animation);
+                this.animations = animation;
+                this.health = 50;
+                this.cool_down = true;
+                scene.add.existing(this);
+                scene.physics.add.existing(this);
+                this.setScale(2);
+                this.health_bar = scene.add.rectangle(x - 5, y - 50, this.health * 1, 1, 0x9966ff);
+              }
+              damage(damage) {
+                  this.health -= damage;
+                  if(this.health<=0){
+                    this.disableBody(true,true);
+                    bossalive=false;
+                  }
+              }
+}
         class Enemy extends Phaser.Physics.Arcade.Sprite {
             constructor(scene, x, y, spritesheet, animation) {
                 super(scene, x, y, spritesheet, animation);
