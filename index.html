@@ -51,6 +51,7 @@
         var gun_type = "machine";
         var shoot_cool_down = true;
         var shooting_state = false;
+        var switch_cool_down = true;
 
         var map;
         var tileset;
@@ -241,7 +242,9 @@
                 player.play(player.animations['idle'], true);
             }
 
-            if (keys.Q.isDown) {
+            if (keys.Q.isDown && switch_cool_down) {
+                switch_cool_down = false;
+                this.time.delayedCall(1000, s_cool_down, [], this);
                 if (gun_type === "machine")
                     gun_type = "shotgun";
                 else
@@ -311,6 +314,10 @@
 
         function cool_down() {
             shoot_cool_down = true;
+        }
+
+        function s_cool_down() {
+            switch_cool_down = true;
         }
 
         function jump(event) {
